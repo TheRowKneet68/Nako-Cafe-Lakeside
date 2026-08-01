@@ -25,7 +25,7 @@ export default function AdminGallery() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl font-bold">Gallery</h1>
-          <p className="mt-1 text-sm text-white/50">{gallery.length} photos.</p>
+          <p className="mt-1 text-sm text-ink/50">{gallery.length} photos.</p>
         </div>
         <button onClick={() => setModal(true)} className="btn-gold !px-5 !py-3">
           <Plus size={16} /> Add Photo
@@ -52,7 +52,7 @@ export default function AdminGallery() {
               </div>
               <div className="p-3">
                 <p className="truncate text-sm font-medium">{item.alt || 'Untitled'}</p>
-                <p className="text-xs uppercase tracking-wider text-white/40">{item.category}</p>
+                <p className="text-xs uppercase tracking-wider text-ink/40">{item.category}</p>
               </div>
             </div>
           ))}

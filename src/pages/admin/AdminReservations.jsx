@@ -14,7 +14,7 @@ export default function AdminReservations() {
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-3xl font-bold">Reservations</h1>
-        <p className="mt-1 text-sm text-white/50">{reservations.length} bookings received.</p>
+        <p className="mt-1 text-sm text-ink/50">{reservations.length} bookings received.</p>
       </div>
 
       {reservations.length ? (
@@ -28,14 +28,14 @@ export default function AdminReservations() {
                     {r.status}
                   </span>
                 </div>
-                <p className="mt-1 text-sm text-white/55">
+                <p className="mt-1 text-sm text-ink/55">
                   {formatDate(r.date)} · {r.time} · {r.guests} guests
                 </p>
-                <p className="mt-0.5 text-xs text-white/40">
+                <p className="mt-0.5 text-xs text-ink/40">
                   {r.phone}
                   {r.email ? ` · ${r.email}` : ''}
                 </p>
-                {r.request && <p className="mt-2 text-sm text-white/50">“{r.request}”</p>}
+                {r.request && <p className="mt-2 text-sm text-ink/50">“{r.request}”</p>}
               </div>
               <div className="flex shrink-0 items-center gap-3">
                 <select
@@ -50,7 +50,7 @@ export default function AdminReservations() {
                 </select>
                 <button
                   onClick={() => handleDelete(r)}
-                  className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 text-white/60 transition hover:border-red-500 hover:text-red-400"
+                  className="grid h-10 w-10 place-items-center rounded-lg border border-line/10 text-ink/60 transition hover:border-red-500 hover:text-red-400"
                   aria-label="Delete reservation"
                 >
                   <Trash2 size={16} />

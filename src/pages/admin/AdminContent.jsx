@@ -97,7 +97,7 @@ export default function AdminContent() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl font-bold">Content Editor</h1>
-          <p className="mt-1 text-sm text-white/50">
+          <p className="mt-1 text-sm text-ink/50">
             Edit every piece of text on the website — it updates instantly across all pages.
           </p>
         </div>
@@ -109,7 +109,7 @@ export default function AdminContent() {
       <form onSubmit={save} className="space-y-6">
         {GROUPS.map((group) => (
           <div key={group.title} className="card p-6">
-            <h2 className="border-b border-white/10 pb-3 font-display text-xl font-bold text-gold">
+            <h2 className="border-b border-line/10 pb-3 font-display text-xl font-bold text-gold">
               {group.title}
             </h2>
             <div className="mt-5 grid gap-5 sm:grid-cols-2">

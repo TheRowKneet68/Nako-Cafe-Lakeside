@@ -9,14 +9,17 @@ import {
   LogOut,
   Mail,
   Menu,
+  Moon,
   PenSquare,
   Settings,
   Star,
+  Sun,
   UtensilsCrossed,
   X
 } from 'lucide-react'
 import { adminLogout } from '../../services/auth.js'
 import { useData } from '../../context/DataContext.jsx'
+import { useTheme } from '../../hooks/useTheme.js'
 
 const items = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
@@ -33,6 +36,7 @@ export default function AdminLayout() {
   const navigate = useNavigate()
   const { reservations, messages } = useData()
   const [open, setOpen] = useState(false)
+  const [dark, setDark] = useTheme()
 
   const pending = reservations.filter((r) => r.status === 'pending').length
   const unread = messages.filter((m) => !m.read).length
@@ -63,7 +67,7 @@ export default function AdminLayout() {
             onClick={() => setOpen(false)}
             className={({ isActive }) =>
               `flex items-center justify-between rounded-lg px-4 py-3 text-sm transition ${
-                isActive ? 'bg-wine text-gold' : 'text-white/65 hover:bg-white/5 hover:text-white'
+                isActive ? 'bg-wine text-gold' : 'text-ink/65 hover:bg-line/5 hover:text-ink'
               }`
             }
           >
@@ -85,16 +89,22 @@ export default function AdminLayout() {
         ))}
       </nav>
 
-      <div className="mt-8 space-y-1.5 border-t border-white/10 pt-5">
+      <div className="mt-8 space-y-1.5 border-t border-line/10 pt-5">
+        <button
+          onClick={() => setDark((d) => !d)}
+          className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm text-ink/65 transition hover:bg-line/5 hover:text-ink"
+        >
+          {dark ? <Sun size={18} /> : <Moon size={18} />} {dark ? 'Light Mode' : 'Dark Mode'}
+        </button>
         <Link
           to="/"
-          className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm text-white/65 transition hover:bg-white/5 hover:text-white"
+          className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm text-ink/65 transition hover:bg-line/5 hover:text-ink"
         >
           <ExternalLink size={18} /> View Site
         </Link>
         <button
           onClick={logout}
-          className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm text-white/65 transition hover:bg-red-500/10 hover:text-red-400"
+          className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm text-ink/65 transition hover:bg-red-500/10 hover:text-red-400"
         >
           <LogOut size={18} /> Logout
         </button>
@@ -103,8 +113,8 @@ export default function AdminLayout() {
   )
 
   return (
-    <div className="flex min-h-screen bg-[#0e0e0e]">
-      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-white/10 bg-[#0e0e0e] p-5 lg:flex">
+    <div className="flex min-h-screen bg-night">
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-line/10 bg-night p-5 lg:flex">
         {nav}
       </aside>
 
@@ -122,12 +132,12 @@ export default function AdminLayout() {
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="flex h-full w-64 flex-col border-r border-white/10 bg-[#0e0e0e] p-5"
+              className="flex h-full w-64 flex-col border-r border-line/10 bg-night p-5"
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 onClick={() => setOpen(false)}
-                className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/60"
+                className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full border border-line/10 text-ink/60"
                 aria-label="Close menu"
               >
                 <X size={16} />
@@ -139,15 +149,22 @@ export default function AdminLayout() {
       </AnimatePresence>
 
       <div className="min-w-0 flex-1">
-        <header className="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-[#0e0e0e]/90 px-5 py-4 backdrop-blur lg:hidden">
+        <header className="sticky top-0 z-40 flex items-center justify-between border-b border-line/10 bg-night/90 px-5 py-4 backdrop-blur lg:hidden">
           <button
             onClick={() => setOpen(true)}
-            className="grid h-10 w-10 place-items-center rounded-lg border border-white/15 text-white"
+            className="grid h-10 w-10 place-items-center rounded-lg border border-line/15 text-ink"
             aria-label="Open admin menu"
           >
             <Menu size={18} />
           </button>
           <span className="font-display text-sm font-semibold text-gold">View Side · Admin</span>
+          <button
+            onClick={() => setDark((d) => !d)}
+            className="grid h-10 w-10 place-items-center rounded-lg border border-line/15 text-ink transition hover:border-gold hover:text-gold"
+            aria-label="Toggle dark mode"
+          >
+            {dark ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
         </header>
 
         <main className="mx-auto max-w-6xl p-5 lg:p-8">{<Outlet />}</main>

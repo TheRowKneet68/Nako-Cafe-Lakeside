@@ -29,7 +29,7 @@ export default function AdminSettings() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl font-bold">Settings</h1>
-          <p className="mt-1 text-sm text-white/50">Business information shown across the site.</p>
+          <p className="mt-1 text-sm text-ink/50">Business information shown across the site.</p>
         </div>
         {saved && <span className="rounded-full bg-green-500/15 px-4 py-2 text-sm text-green-400">Saved ✓</span>}
       </div>

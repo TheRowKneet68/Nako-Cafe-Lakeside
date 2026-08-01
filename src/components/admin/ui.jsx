@@ -36,7 +36,7 @@ export function Modal({ open, onClose, title, children, wide = false }) {
               <h2 className="font-display text-xl font-bold">{title}</h2>
               <button
                 onClick={onClose}
-                className="grid h-9 w-9 place-items-center rounded-full border border-white/10 transition hover:border-gold hover:text-gold"
+                className="grid h-9 w-9 place-items-center rounded-full border border-line/10 transition hover:border-gold hover:text-gold"
                 aria-label="Close"
               >
                 <X size={18} />
@@ -53,7 +53,7 @@ export function Modal({ open, onClose, title, children, wide = false }) {
 export function Field({ label, children }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-white/60">
+      <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-ink/60">
         {label}
       </span>
       {children}
@@ -91,7 +91,7 @@ export function ImageInput({ value, onChange, label = 'Image' }) {
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="grid h-16 w-16 shrink-0 place-items-center rounded-lg border border-dashed border-white/25 text-white/50 transition hover:border-gold hover:text-gold"
+            className="grid h-16 w-16 shrink-0 place-items-center rounded-lg border border-dashed border-line/25 text-ink/50 transition hover:border-gold hover:text-gold"
             aria-label="Upload image"
           >
             <ImagePlus size={20} />
@@ -118,12 +118,12 @@ export function StatCard({ icon: Icon, label, value, tone = 'text-gold' }) {
       </span>
       <div>
         <p className="font-display text-2xl font-bold">{value}</p>
-        <p className="text-xs uppercase tracking-wider text-white/50">{label}</p>
+        <p className="text-xs uppercase tracking-wider text-ink/50">{label}</p>
       </div>
     </div>
   )
 }
 
 export function EmptyState({ text = 'Nothing here yet.' }) {
-  return <p className="py-10 text-center text-sm text-white/40">{text}</p>
+  return <p className="py-10 text-center text-sm text-ink/40">{text}</p>
 }

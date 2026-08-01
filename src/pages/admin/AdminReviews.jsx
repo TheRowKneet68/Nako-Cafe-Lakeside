@@ -28,7 +28,7 @@ export default function AdminReviews() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl font-bold">Reviews</h1>
-          <p className="mt-1 text-sm text-white/50">{reviews.length} guest reviews.</p>
+          <p className="mt-1 text-sm text-ink/50">{reviews.length} guest reviews.</p>
         </div>
         <button onClick={() => setModal(true)} className="btn-gold !px-5 !py-3">
           <Plus size={16} /> Add Review
@@ -46,12 +46,12 @@ export default function AdminReviews() {
                   </span>
                   <div>
                     <p className="font-medium">{r.name}</p>
-                    <p className="text-xs text-white/45">{r.location}</p>
+                    <p className="text-xs text-ink/45">{r.location}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => handleDelete(r)}
-                  className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-white/10 text-white/60 transition hover:border-red-500 hover:text-red-400"
+                  className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-line/10 text-ink/60 transition hover:border-red-500 hover:text-red-400"
                   aria-label="Delete review"
                 >
                   <Trash2 size={14} />
@@ -60,7 +60,7 @@ export default function AdminReviews() {
               <div className="mt-3">
                 <RatingStars rating={r.rating} size={14} />
               </div>
-              <p className="mt-3 text-sm leading-relaxed text-white/65">“{r.text}”</p>
+              <p className="mt-3 text-sm leading-relaxed text-ink/65">“{r.text}”</p>
             </div>
           ))}
         </div>

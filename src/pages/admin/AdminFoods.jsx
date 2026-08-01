@@ -72,7 +72,7 @@ export default function AdminFoods() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl font-bold">Menu Items</h1>
-          <p className="mt-1 text-sm text-white/50">{foods.length} dishes across {categories.length} categories.</p>
+          <p className="mt-1 text-sm text-ink/50">{foods.length} dishes across {categories.length} categories.</p>
         </div>
         <button onClick={openAdd} className="btn-gold !px-5 !py-3">
           <Plus size={16} /> Add Food Item
@@ -80,7 +80,7 @@ export default function AdminFoods() {
       </div>
 
       <div className="relative max-w-sm">
-        <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40" />
+        <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40" />
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
@@ -100,26 +100,26 @@ export default function AdminFoods() {
                   <div className="flex gap-1.5">
                     <button
                       onClick={() => openEdit(f)}
-                      className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-white/10 text-white/60 transition hover:border-gold hover:text-gold"
+                      className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-line/10 text-ink/60 transition hover:border-gold hover:text-gold"
                       aria-label={`Edit ${f.name}`}
                     >
                       <Pencil size={14} />
                     </button>
                     <button
                       onClick={() => handleDelete(f)}
-                      className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-white/10 text-white/60 transition hover:border-red-500 hover:text-red-400"
+                      className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-line/10 text-ink/60 transition hover:border-red-500 hover:text-red-400"
                       aria-label={`Delete ${f.name}`}
                     >
                       <Trash2 size={14} />
                     </button>
                   </div>
                 </div>
-                <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-white/50">
-                  <span className="rounded bg-white/5 px-2 py-0.5 capitalize">{f.category}</span>
+                <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-ink/50">
+                  <span className="rounded bg-line/5 px-2 py-0.5 capitalize">{f.category}</span>
                   <VegBadge veg={f.veg} />
                   <SpicyIndicator level={f.spicy} />
                   {f.popular && <span className="rounded bg-gold px-2 py-0.5 font-semibold text-night">Popular</span>}
-                  {f.new && <span className="rounded bg-white/10 px-2 py-0.5 font-semibold text-white/70">New</span>}
+                  {f.new && <span className="rounded bg-line/10 px-2 py-0.5 font-semibold text-ink/70">New</span>}
                 </div>
                 <p className="mt-1.5 font-display text-gold">{formatPrice(f.price)}</p>
               </div>
@@ -204,7 +204,7 @@ export default function AdminFoods() {
             </Field>
           </div>
           <div className="flex flex-wrap items-center gap-6 sm:col-span-2">
-            <label className="flex items-center gap-2.5 text-sm text-white/70">
+            <label className="flex items-center gap-2.5 text-sm text-ink/70">
               <input
                 type="checkbox"
                 checked={form.veg}
@@ -213,7 +213,7 @@ export default function AdminFoods() {
               />
               Vegetarian
             </label>
-            <label className="flex items-center gap-2.5 text-sm text-white/70">
+            <label className="flex items-center gap-2.5 text-sm text-ink/70">
               <input
                 type="checkbox"
                 checked={form.popular}
@@ -222,7 +222,7 @@ export default function AdminFoods() {
               />
               Popular badge
             </label>
-            <label className="flex items-center gap-2.5 text-sm text-white/70">
+            <label className="flex items-center gap-2.5 text-sm text-ink/70">
               <input
                 type="checkbox"
                 checked={form.new}

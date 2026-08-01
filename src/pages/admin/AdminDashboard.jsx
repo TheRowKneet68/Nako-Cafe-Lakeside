@@ -15,7 +15,7 @@ export default function AdminDashboard() {
     <div className="space-y-8">
       <div>
         <h1 className="font-display text-3xl font-bold">Dashboard</h1>
-        <p className="mt-1 text-sm text-white/50">An overview of everything happening at View Side.</p>
+        <p className="mt-1 text-sm text-ink/50">An overview of everything happening at View Side.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -28,12 +28,12 @@ export default function AdminDashboard() {
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="card p-6">
           <h2 className="font-display text-xl font-bold">Recent Reservations</h2>
-          <ul className="mt-4 divide-y divide-white/5">
+          <ul className="mt-4 divide-y divide-line/10">
             {reservations.slice(0, 6).map((r) => (
               <li key={r.id} className="flex items-center justify-between gap-3 py-3">
                 <div>
                   <p className="text-sm font-medium">{r.name}</p>
-                  <p className="text-xs text-white/45">
+                  <p className="text-xs text-ink/45">
                     {r.date} · {r.time} · {r.guests} guests
                   </p>
                 </div>
@@ -48,7 +48,7 @@ export default function AdminDashboard() {
 
         <div className="card p-6">
           <h2 className="font-display text-xl font-bold">Recent Messages</h2>
-          <ul className="mt-4 divide-y divide-white/5">
+          <ul className="mt-4 divide-y divide-line/10">
             {messages.slice(0, 6).map((m) => (
               <li key={m.id} className="flex items-center justify-between gap-3 py-3">
                 <div className="min-w-0">
@@ -56,7 +56,7 @@ export default function AdminDashboard() {
                     {m.subject}
                     {!m.read && <span className="ml-2 rounded bg-gold px-1.5 py-0.5 text-[9px] font-bold uppercase text-night">New</span>}
                   </p>
-                  <p className="truncate text-xs text-white/45">
+                  <p className="truncate text-xs text-ink/45">
                     {m.name} · {m.email}
                   </p>
                 </div>

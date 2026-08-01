@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { CalendarCheck, Coffee, Menu, Moon, Sun, X } from 'lucide-react'
+import { useTheme } from '../../hooks/useTheme.js'
 
 const links = [
   { to: '/', label: 'Home' },
@@ -12,18 +13,6 @@ const links = [
   { to: '/reviews', label: 'Reviews' },
   { to: '/contact', label: 'Contact' }
 ]
-
-function useTheme() {
-  const [dark, setDark] = useState(() => {
-    if (typeof window === 'undefined') return false
-    return localStorage.getItem('nako_theme') === 'dark'
-  })
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', dark)
-    localStorage.setItem('nako_theme', dark ? 'dark' : 'light')
-  }, [dark])
-  return [dark, setDark]
-}
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
