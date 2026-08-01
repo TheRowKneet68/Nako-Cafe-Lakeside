@@ -20,6 +20,7 @@ export default function Hero() {
     <section ref={ref} className="relative flex min-h-screen items-center justify-center overflow-hidden">
       <motion.div style={{ y }} className="absolute inset-0 -z-10 scale-110">
         <img src={images.hero} alt="A warm cup of coffee at Nako Cafe" className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-black/40" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/45 to-[var(--bg)]" />
       </motion.div>
 
@@ -34,7 +35,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15, duration: 0.7 }}
-          className="eyebrow mb-6"
+          className="mb-6 text-xs font-semibold uppercase tracking-[0.3em] text-[#e8c28e]"
         >
           {settings.heroBadge}
         </motion.p>
@@ -44,7 +45,7 @@ export default function Hero() {
           transition={{ delay: 0.3, duration: 0.8 }}
           className="font-display text-5xl font-bold leading-tight text-white sm:text-6xl lg:text-8xl"
         >
-          {settings.heroTitle} <span className="gold-text italic">{settings.heroHighlight}</span>
+          {settings.heroTitle} <span className="italic text-[#f0cd9b]">{settings.heroHighlight}</span>
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 30 }}
@@ -60,7 +61,7 @@ export default function Hero() {
           transition={{ delay: 0.6, duration: 0.8 }}
           className="mt-10 flex flex-wrap items-center justify-center gap-4"
         >
-          <Link to="/menu" className="btn-outline">
+          <Link to="/menu" className="btn-outline !border-[#e8c28e]/70 !text-[#e8c28e] hover:!bg-[#e8c28e] hover:!text-[#241710]">
             <Coffee size={18} /> View Menu
           </Link>
           <a href={orderUrl} target="_blank" rel="noreferrer" className="btn-wine">
