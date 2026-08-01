@@ -150,7 +150,12 @@ export default function Footer() {
               Admin
             </Link>
             <span>·</span>
-            <p>Crafted with ♥ in Nepal</p>
+            <p>
+              Made by{' '}
+              <a href="tel:9829117277" className="text-white/60 transition hover:text-gold">
+                Ronit Baniya · Surkasha Ghar · 9829117277
+              </a>
+            </p>
           </div>
         </div>
       </div>
