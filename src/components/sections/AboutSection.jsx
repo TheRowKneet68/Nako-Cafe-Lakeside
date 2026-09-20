@@ -1,78 +1,17 @@
-import {
-  Armchair,
-  Bean,
-  CupSoda,
-  Info,
-  Leaf,
-  Sofa,
-  Sparkles,
-  Users,
-  Utensils,
-  Wifi
-} from 'lucide-react'
+import { Armchair, Bean, CupSoda, Info, Leaf, Sofa, Sparkles, Users, Utensils, Wifi } from 'lucide-react'
 import Reveal from '../ui/Reveal.jsx'
 import AnimatedCounter from '../ui/AnimatedCounter.jsx'
 import { images } from '../../data/siteData.js'
 import { useData } from '../../context/DataContext.jsx'
 
-const values = [
-  {
-    icon: Bean,
-    title: 'Small-Batch Roasting',
-    text: 'Beans from the hills of Syangja, roasted fresh every week so every cup tastes alive.'
-  },
-  {
-    icon: Leaf,
-    title: 'Local Sourcing',
-    text: 'Milk, sugar and seasonal produce from Pokhara’s own farms and market gardens.'
-  },
-  {
-    icon: Sparkles,
-    title: 'Barista Craft',
-    text: 'Every cup is dialled in — dose, ratio and timing, measured shot by shot.'
-  },
-  {
-    icon: Armchair,
-    title: 'A Space to Stay',
-    text: 'Minimalist, calm and built for lingering — work, chat or simply be.'
-  }
-]
-
-const amenityGroups = [
-  {
-    icon: Utensils,
-    title: 'Service Options',
-    items: ['Outdoor Seating', 'Dine-in', 'Takeaway', 'Delivery', 'On-site Services']
-  },
-  {
-    icon: CupSoda,
-    title: 'Offerings',
-    items: ['Coffee', 'Vegan Options', 'Vegetarian Options', 'Small Plates', 'Quick Bite', 'Alcohol']
-  },
-  {
-    icon: Sofa,
-    title: 'Atmosphere',
-    items: ['Casual', 'Cosy', 'Quiet', 'Trendy', 'Solo Dining Friendly']
-  },
-  {
-    icon: Wifi,
-    title: 'Amenities',
-    items: ['Free Wi-Fi', 'Gender-Neutral Toilets', 'NFC Payments', 'Seating', 'Table Service']
-  },
-  {
-    icon: Users,
-    title: 'Our Crowd',
-    items: ['Family Friendly', 'Groups', 'LGBTQ+ Friendly', 'Transgender Safe Space', 'Tourists', 'University Students']
-  },
-  {
-    icon: Info,
-    title: 'Good to Know',
-    items: ['Good for Kids', 'Dogs Allowed', 'Free Street Parking', 'Free Parking Lot', 'Breakfast & Dessert']
-  }
-]
+const valueIcons = [Bean, Leaf, Sparkles, Armchair]
+const amenityIcons = [Utensils, CupSoda, Sofa, Wifi, Users, Info]
 
 export default function AboutSection() {
   const { settings } = useData()
+  const values = settings.sections?.values?.length ? settings.sections.values : []
+  const amenities = settings.sections?.amenities?.length ? settings.sections.amenities : []
+  const barista = settings.sections?.barista || {}
 
   return (
     <section id="about" className="py-24">
@@ -81,7 +20,7 @@ export default function AboutSection() {
           <div className="relative">
             <div className="overflow-hidden rounded-2xl">
               <img
-                src={images.about1}
+                src={settings.aboutImage1 || images.about1}
                 alt="Freshly roasted coffee beans at Nako Cafe"
                 loading="lazy"
                 className="aspect-[4/5] w-full object-cover"
@@ -89,7 +28,7 @@ export default function AboutSection() {
             </div>
             <div className="absolute -bottom-8 -right-4 w-52 overflow-hidden rounded-2xl border-4 border-night shadow-2xl sm:w-64">
               <img
-                src={images.about2}
+                src={settings.aboutImage2 || images.about2}
                 alt="Latte art poured at the brew bar"
                 loading="lazy"
                 className="aspect-square w-full object-cover"
@@ -121,17 +60,20 @@ export default function AboutSection() {
           </Reveal>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {values.map((v, i) => (
-              <Reveal key={v.title} delay={0.15 + i * 0.08}>
-                <div className="card h-full p-5">
-                  <span className="grid h-11 w-11 place-items-center rounded-full bg-wine text-gold">
-                    <v.icon size={20} />
-                  </span>
-                  <h3 className="mt-4 font-display text-lg font-semibold">{v.title}</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-ink/55">{v.text}</p>
-                </div>
-              </Reveal>
-            ))}
+            {values.map((v, i) => {
+              const Icon = valueIcons[i % valueIcons.length]
+              return (
+                <Reveal key={i} delay={0.15 + i * 0.08}>
+                  <div className="card h-full p-5">
+                    <span className="grid h-11 w-11 place-items-center rounded-full bg-wine text-gold">
+                      <Icon size={20} />
+                    </span>
+                    <h3 className="mt-4 font-display text-lg font-semibold">{v.title}</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-ink/55">{v.text}</p>
+                  </div>
+                </Reveal>
+              )
+            })}
           </div>
         </div>
       </div>
@@ -145,26 +87,29 @@ export default function AboutSection() {
             </h3>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {amenityGroups.map((g, i) => (
-              <div key={g.title} className="card p-6">
-                <div className="flex items-center gap-3">
-                  <span className="grid h-10 w-10 place-items-center rounded-full bg-wine text-gold">
-                    <g.icon size={18} />
-                  </span>
-                  <h4 className="font-display text-lg font-semibold">{g.title}</h4>
+            {amenities.map((g, i) => {
+              const Icon = amenityIcons[i % amenityIcons.length]
+              return (
+                <div key={i} className="card p-6">
+                  <div className="flex items-center gap-3">
+                    <span className="grid h-10 w-10 place-items-center rounded-full bg-wine text-gold">
+                      <Icon size={18} />
+                    </span>
+                    <h4 className="font-display text-lg font-semibold">{g.title}</h4>
+                  </div>
+                  <ul className="mt-5 flex flex-wrap gap-2">
+                    {(g.items || []).map((item) => (
+                      <li
+                        key={item}
+                        className="rounded-full border border-line/15 bg-night px-3.5 py-1.5 text-xs text-ink/70"
+                      >
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="mt-5 flex flex-wrap gap-2">
-                  {g.items.map((item) => (
-                    <li
-                      key={item}
-                      className="rounded-full border border-line/15 bg-night px-3.5 py-1.5 text-xs text-ink/70"
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </Reveal>
       </div>
@@ -188,7 +133,7 @@ export default function AboutSection() {
         <Reveal>
           <div className="card grid overflow-hidden md:grid-cols-[320px_1fr]">
             <img
-              src={images.chef}
+              src={settings.chefImage || images.chef}
               alt="Head barista at Nako Cafe"
               loading="lazy"
               className="h-80 w-full object-cover md:h-full"
@@ -201,32 +146,32 @@ export default function AboutSection() {
               <div className="mt-8 flex flex-wrap gap-8">
                 <div>
                   <AnimatedCounter
-                    value={10}
-                    suffix="+"
+                    value={Number(barista.years?.value) || 10}
+                    suffix={barista.years?.suffix || '+'}
                     className="gold-text font-display text-4xl font-bold"
                   />
                   <p className="mt-1 text-xs uppercase tracking-widest text-ink/50">
-                    Years Brewing
+                    {barista.years?.label || 'Years Brewing'}
                   </p>
                 </div>
                 <div>
                   <AnimatedCounter
-                    value={1}
-                    suffix="K+"
+                    value={Number(barista.cups?.value) || 1}
+                    suffix={barista.cups?.suffix || 'K+'}
                     className="gold-text font-display text-4xl font-bold"
                   />
                   <p className="mt-1 text-xs uppercase tracking-widest text-ink/50">
-                    Cups Poured
+                    {barista.cups?.label || 'Cups Poured'}
                   </p>
                 </div>
                 <div>
                   <AnimatedCounter
-                    value={100}
-                    suffix="%"
+                    value={Number(barista.beans?.value) || 100}
+                    suffix={barista.beans?.suffix || '%'}
                     className="gold-text font-display text-4xl font-bold"
                   />
                   <p className="mt-1 text-xs uppercase tracking-widest text-ink/50">
-                    Nepali Beans
+                    {barista.beans?.label || 'Nepali Beans'}
                   </p>
                 </div>
               </div>

@@ -1,10 +1,13 @@
 import PageHeader from '../components/ui/PageHeader.jsx'
 import AboutSection from '../components/sections/AboutSection.jsx'
 import CTASection from '../components/sections/CTASection.jsx'
+import { useData } from '../context/DataContext.jsx'
 import { useSEO } from '../hooks/useSEO.js'
 import { images } from '../data/siteData.js'
 
 export default function About() {
+  const { settings } = useData()
+  const ph = settings.sections?.pageHeaders?.about || {}
   useSEO({
     title: 'About Us',
     description:
@@ -14,10 +17,10 @@ export default function About() {
   return (
     <>
       <PageHeader
-        eyebrow="Our Story"
-        title="About Nako Cafe"
-        subtitle="Small-batch Nepali coffee, poured with care in a space made for lingering."
-        bg={images.about2}
+        eyebrow={ph.eyebrow || 'Our Story'}
+        title={ph.title || 'About Nako Cafe'}
+        subtitle={ph.subtitle || 'Small-batch Nepali coffee, poured with care in a space made for lingering.'}
+        bg={settings.aboutImage2 || images.about2}
       />
       <AboutSection />
       <CTASection />

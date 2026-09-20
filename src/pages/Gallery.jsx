@@ -1,10 +1,13 @@
 import PageHeader from '../components/ui/PageHeader.jsx'
 import GallerySection from '../components/sections/GallerySection.jsx'
 import CTASection from '../components/sections/CTASection.jsx'
+import { useData } from '../context/DataContext.jsx'
 import { useSEO } from '../hooks/useSEO.js'
 import { images } from '../data/siteData.js'
 
 export default function Gallery() {
+  const { settings } = useData()
+  const ph = settings.sections?.pageHeaders?.gallery || {}
   useSEO({
     title: 'Gallery',
     description:
@@ -14,10 +17,10 @@ export default function Gallery() {
   return (
     <>
       <PageHeader
-        eyebrow="Picture Perfect"
-        title="Our Gallery"
-        subtitle="Coffee, latte art, interiors and the moments in between."
-        bg={images.hero}
+        eyebrow={ph.eyebrow || 'Picture Perfect'}
+        title={ph.title || 'Our Gallery'}
+        subtitle={ph.subtitle || 'Coffee, latte art, interiors and the moments in between.'}
+        bg={settings.heroImage || images.hero}
       />
       <GallerySection full />
       <CTASection />

@@ -27,6 +27,7 @@ export default function Reservation() {
   })
 
   const { add, settings } = useData()
+  const ph = settings.sections?.pageHeaders?.reservation || {}
   const [submitted, setSubmitted] = useState(null)
   const [submitError, setSubmitError] = useState('')
   const {
@@ -63,10 +64,10 @@ export default function Reservation() {
   return (
     <>
       <PageHeader
-        eyebrow="Book a Table"
-        title="Reserve Your Visit"
-        subtitle="Tell us when — we'll keep the best seat by the window ready for you."
-        bg={images.hero}
+        eyebrow={ph.eyebrow || 'Book a Table'}
+        title={ph.title || 'Reserve Your Visit'}
+        subtitle={ph.subtitle || "Tell us when — we'll keep the best seat by the window ready for you."}
+        bg={settings.heroImage || images.hero}
       />
 
       <section className="py-16">

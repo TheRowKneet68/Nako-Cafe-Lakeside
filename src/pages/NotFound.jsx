@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom'
 import { Coffee, Home, Menu as MenuIcon } from 'lucide-react'
+import { useData } from '../context/DataContext.jsx'
 import { useSEO } from '../hooks/useSEO.js'
 import { images } from '../data/siteData.js'
 
 export default function NotFound() {
+  const { settings } = useData()
   useSEO({
     title: 'Page Not Found',
     description: 'The page you are looking for has wandered off. Back to Nako Cafe for a fresh cup.'
@@ -12,7 +14,7 @@ export default function NotFound() {
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
       <div className="absolute inset-0 -z-10">
-        <img src={images.hero} alt="" className="h-full w-full object-cover" />
+        <img src={settings.heroImage || images.hero} alt="" className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-black/70" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-[var(--bg)]" />
       </div>

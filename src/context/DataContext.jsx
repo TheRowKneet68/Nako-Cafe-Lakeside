@@ -7,6 +7,7 @@ import { defaultGallery } from '../data/gallery.js'
 import { defaultReviews } from '../data/reviews.js'
 import { defaultEvents } from '../data/events.js'
 import { defaultSettings } from '../data/siteData.js'
+import { defaultSections } from '../data/siteData.js'
 
 const DataContext = createContext(null)
 
@@ -50,6 +51,28 @@ function stripSystem(row) {
   return clean
 }
 
+// Keep merged defaults for columns that are still NULL in the DB.
+function pickDefined(row) {
+  const out = {}
+  for (const [k, v] of Object.entries(row || {})) if (v !== null && v !== undefined) out[k] = v
+  return out
+}
+
+// Merge the DB `sections` JSON over the defaults so a partial/empty row never
+// wipes the pre-loaded structured content (stats, values, amenities, coffee).
+function mergeSections(dbSections) {
+  if (!dbSections || typeof dbSections !== 'object') return defaultSections
+  const merged = { ...defaultSections }
+  for (const [key, value] of Object.entries(dbSections)) {
+    if (value && typeof value === 'object' && !Array.isArray(value) && merged[key] && typeof merged[key] === 'object') {
+      merged[key] = { ...merged[key], ...value }
+    } else if (value !== null && value !== undefined && value !== '') {
+      merged[key] = value
+    }
+  }
+  return merged
+}
+
 export function DataProvider({ children }) {
   const [foods, setFoods] = useState(() => load(KEYS.foods, defaultFoods))
   const [categories, setCategories] = useState(() => load(KEYS.categories, defaultCategories))
@@ -58,7 +81,11 @@ export function DataProvider({ children }) {
   const [events, setEvents] = useState(() => load(KEYS.events, defaultEvents))
   const [reservations, setReservations] = useState(() => load(KEYS.reservations, []))
   const [messages, setMessages] = useState(() => load(KEYS.messages, []))
-  const [settings, setSettings] = useState(() => ({ ...defaultSettings, ...load(KEYS.settings, {}) }))
+  const [settings, setSettings] = useState(() => ({
+  ...defaultSettings,
+  ...pickDefined(load(KEYS.settings, {})),
+  sections: mergeSections(load(KEYS.settings, {}).sections)
+}))
   const [visits, setVisits] = useState(0)
 
   useEffect(() => localStorage.setItem(KEYS.foods, JSON.stringify(foods)), [foods])
@@ -95,7 +122,7 @@ export function DataProvider({ children }) {
       if (!error && data?.length) setters.current[key](data)
     }
     const { data: s } = await supabase.from('ncl_settings').select('*').maybeSingle()
-    if (s) setSettings((prev) => ({ ...prev, ...s }))
+    if (s) setSettings((prev) => ({ ...prev, ...pickDefined(s), sections: mergeSections(s.sections) }))
     const visitsValue = await getVisits()
     setVisits(Number(visitsValue) || 0)
   }

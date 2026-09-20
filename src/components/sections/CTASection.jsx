@@ -10,7 +10,7 @@ export default function CTASection() {
   return (
     <section className="relative overflow-hidden py-28">
       <img
-        src={images.cta}
+        src={settings.ctaImage || images.cta}
         alt=""
         loading="lazy"
         className="absolute inset-0 h-full w-full object-cover"

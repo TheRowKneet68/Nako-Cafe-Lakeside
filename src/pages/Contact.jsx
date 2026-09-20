@@ -18,6 +18,7 @@ export default function Contact() {
   })
 
   const { add, settings } = useData()
+  const ph = settings.sections?.pageHeaders?.contact || {}
   const [sent, setSent] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const {
@@ -59,10 +60,10 @@ export default function Contact() {
   return (
     <>
       <PageHeader
-        eyebrow="Say Hello"
-        title="Contact Us"
-        subtitle="We'd love to hear from you — questions, feedback or a group visit to the cafe."
-        bg={images.cta}
+        eyebrow={ph.eyebrow || 'Say Hello'}
+        title={ph.title || 'Contact Us'}
+        subtitle={ph.subtitle || "We'd love to hear from you — questions, feedback or a group visit to the cafe."}
+        bg={settings.ctaImage || images.cta}
       />
 
       <section className="py-16">

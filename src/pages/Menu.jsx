@@ -14,7 +14,8 @@ export default function Menu() {
       'Explore the full Nako Cafe menu — espresso, lattes, Spanish latte, pour over, cold brew, hot chocolate, tea, pastries, desserts & light food. With veg, popular and new badges.'
   })
 
-  const { foods, categories } = useData()
+  const { foods, categories, settings } = useData()
+  const ph = settings.sections?.pageHeaders?.menu || {}
   const [cat, setCat] = useState('all')
   const [q, setQ] = useState('')
 
@@ -40,10 +41,10 @@ export default function Menu() {
   return (
     <>
       <PageHeader
-        eyebrow="Taste the Menu"
-        title="Our Coffee & Menu"
-        subtitle="Search, filter by category, and spot the veg, popular and new picks at a glance."
-        bg={images.hero}
+        eyebrow={ph.eyebrow || 'Taste the Menu'}
+        title={ph.title || 'Our Coffee & Menu'}
+        subtitle={ph.subtitle || 'Search, filter by category, and spot the veg, popular and new picks at a glance.'}
+        bg={settings.heroImage || images.hero}
       />
 
       <section className="py-16">

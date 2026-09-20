@@ -17,7 +17,8 @@ export default function Events() {
       'Live music, latte art workshops, tastings and slow Sunday mornings at Nako Cafe, Lakeside Pokhara. Check what is coming up and book your spot.'
   })
 
-  const { events } = useData()
+  const { events, settings } = useData()
+  const ph = settings.sections?.pageHeaders?.events || {}
   const [view, setView] = useState('upcoming')
 
   const { upcoming, past, next } = useMemo(() => {
@@ -35,10 +36,10 @@ export default function Events() {
   return (
     <>
       <PageHeader
-        eyebrow="Live Music & Events"
-        title="Evenings Worth Staying For"
-        subtitle="Acoustic sets, latte art nights and slow tastings — the events calendar at Nako Cafe."
-        bg={images.cta}
+        eyebrow={ph.eyebrow || 'Live Music & Events'}
+        title={ph.title || 'Evenings Worth Staying For'}
+        subtitle={ph.subtitle || 'Acoustic sets, latte art nights and slow tastings — the events calendar at Nako Cafe.'}
+        bg={settings.ctaImage || images.cta}
       />
 
       <section className="py-16">

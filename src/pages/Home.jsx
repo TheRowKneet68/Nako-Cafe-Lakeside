@@ -11,11 +11,12 @@ import { useData } from '../context/DataContext.jsx'
 import { cafeSchema } from '../utils/helpers.js'
 
 export default function Home() {
-  const { settings } = useData()
+  const { settings, reviews } = useData()
   useSEO({
     description:
       'Specialty coffee from carefully selected Nepali beans in Lakeside, Pokhara. Spanish Latte, espresso, pour over, fresh pastries & a warm workspace. Rated 4.9/5.',
-    jsonLd: cafeSchema(settings)
+    image: settings.heroImage,
+    jsonLd: cafeSchema(settings, reviews)
   })
 
   return (

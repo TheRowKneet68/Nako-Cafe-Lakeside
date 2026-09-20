@@ -27,7 +27,7 @@ export default function ReviewsSection({ limit }) {
           <div>
             <RatingStars rating={avg} size={20} />
             <p className="mt-1.5 text-sm text-ink/55">
-              {reviews.length} featured reviews · 177+ on Google
+              {reviews.length} featured reviews · join us on Google
             </p>
           </div>
         </div>

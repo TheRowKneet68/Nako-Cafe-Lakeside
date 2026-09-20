@@ -154,7 +154,14 @@ create table if not exists public.ncl_settings (
   "ctaTitle" text,
   "ctaTitleHighlight" text,
   "ctaSubtitle" text,
-  "footerAbout" text
+  "footerAbout" text,
+  "heroImage" text,
+  "aboutImage1" text,
+  "aboutImage2" text,
+  "chefImage" text,
+  "ctaImage" text,
+  "coffeeImage" text,
+  sections jsonb default '{}'::jsonb
 );
 
 create table if not exists public.ncl_analytics (
@@ -433,7 +440,11 @@ create policy ncl_content_delete on storage.objects
   using (bucket_id = 'ncl-content' and public.ncl_app_role() in ('admin', 'employee'));
 
 -- ---------- Settings seed ----------
-insert into public.ncl_settings (id, name, tagline, address, phone, email, whatsapp, "mapQuery", "openingDays", "openingHours", "priceRange")
+insert into public.ncl_settings (
+  id, name, tagline, address, phone, email, whatsapp, "mapQuery",
+  "openingDays", "openingHours", "priceRange",
+  "heroImage", "aboutImage1", "aboutImage2", "chefImage", "ctaImage", "coffeeImage"
+)
 values (
   1,
   'Nako Cafe',
@@ -445,11 +456,26 @@ values (
   'Lakeside, Pokhara, Nepal',
   'Open Daily',
   '7:00 AM – 9:00 PM',
-  'Rs 1–500'
+  'Rs 1–500',
+  'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1920&q=80',
+  'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=900&q=80',
+  'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1587734195503-904fca47e0e9?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1920&q=80',
+  'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=900&q=80'
 )
 on conflict (id) do nothing;
 
 -- ---------- Hardening (idempotent — safe to re-run) ----------
+
+-- Site image + structured content columns (added after the initial release).
+alter table public.ncl_settings add column if not exists "heroImage" text;
+alter table public.ncl_settings add column if not exists "aboutImage1" text;
+alter table public.ncl_settings add column if not exists "aboutImage2" text;
+alter table public.ncl_settings add column if not exists "chefImage" text;
+alter table public.ncl_settings add column if not exists "ctaImage" text;
+alter table public.ncl_settings add column if not exists "coffeeImage" text;
+alter table public.ncl_settings add column if not exists sections jsonb default '{}'::jsonb;
 
 -- Visit counter: increments server-side only. Public users can never write
 -- arbitrary values into `analytics`; the app calls this function instead.

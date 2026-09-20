@@ -9,20 +9,17 @@ import { useData } from '../context/DataContext.jsx'
 import { useSEO } from '../hooks/useSEO.js'
 import { images } from '../data/siteData.js'
 
-const highlights = [
-  { icon: Bean, title: 'Nepali Beans', text: 'Single-origin beans from the hills of Syangja, roasted in small batches.' },
-  { icon: Flame, title: 'Caramel Sweetness', text: 'Condensed milk is folded in while the espresso is still hot — no syrup, no shortcuts.' },
-  { icon: Leaf, title: 'Silky Finish', text: 'Topped with velvety steamed milk for a cup that is smooth to the very last sip.' }
-]
-
-const craft = [
-  { icon: Bean, title: 'Small-Batch Roasting', text: 'We roast weekly so the beans are never older than they should be — bright, sweet and alive.' },
-  { icon: Sparkles, title: 'Precision in Every Shot', text: 'Dose, ratio, temperature and timing are dialled in each morning and checked through the day.' },
-  { icon: CoffeeIcon, title: 'Fresh in Every Cup', text: 'Nothing sits under a heat lamp. Coffee is ground to order and pulled the moment you order it.' }
-]
+const highlightIcons = [Bean, Flame, Leaf]
+const craftIcons = [Bean, Sparkles, CoffeeIcon]
 
 export default function Coffee() {
   const { foods, settings } = useData()
+  const coffee = settings.sections?.coffee || {}
+  const highlights = coffee.highlights || []
+  const craft = coffee.craft || []
+  const intro = coffee.intro || {}
+  const craftHeading = coffee.craftHeading || {}
+  const favouritesHeading = coffee.favouritesHeading || {}
 
   useSEO({
     title: 'Featured Coffee',
@@ -41,7 +38,7 @@ export default function Coffee() {
         eyebrow="Featured Coffee"
         title="The Spanish Latte"
         subtitle="The cup our regulars say they can't find anywhere else — and the reason many first discover Nako Cafe."
-        bg={images.hero}
+        bg={settings.heroImage || images.hero}
       />
 
       <section className="py-20">
@@ -49,7 +46,7 @@ export default function Coffee() {
           <Reveal>
             <div className="overflow-hidden rounded-3xl shadow-soft">
               <img
-                src="https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=900&q=80"
+                src={settings.coffeeImage || images.coffee}
                 alt="Spanish Latte with caramel swirl"
                 className="aspect-[4/5] w-full object-cover"
               />
@@ -58,33 +55,34 @@ export default function Coffee() {
 
           <div>
             <Reveal>
-              <span className="eyebrow">Why It’s a Legend</span>
+              <span className="eyebrow">{intro.eyebrow || 'Why It’s a Legend'}</span>
               <h2 className="mt-4 font-display text-4xl font-bold sm:text-5xl">
-                Espresso, Sweetened <span className="text-gold">the Spanish Way</span>
+                {intro.title || 'Espresso, Sweetened'}{' '}
+                <span className="text-gold">{intro.titleHighlight || 'the Spanish Way'}</span>
               </h2>
               <p className="mt-6 leading-relaxed text-ink/65">
-                The Spanish Latte is not just our best-selling drink — it is the drink people cross
-                Lakeside for. It starts with a double shot of our Nepali single-origin espresso,
-                pulled rich and syrupy. While it is still hot, sweetened condensed milk is blended
-                in, turning the coffee round and caramel-sweet without a drop of syrup. A layer of
-                silky steamed milk finishes the cup.
+                {intro.text ||
+                  'The Spanish Latte is not just our best-selling drink — it is the drink people cross Lakeside for.'}
               </p>
             </Reveal>
 
             <div className="mt-8 space-y-4">
-              {highlights.map((h, i) => (
-                <Reveal key={h.title} delay={0.1 + i * 0.08}>
-                  <div className="card flex items-start gap-4 p-5">
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-wine text-gold">
-                      <h.icon size={20} />
-                    </span>
-                    <div>
-                      <h3 className="font-display text-lg font-semibold">{h.title}</h3>
-                      <p className="mt-1 text-sm leading-relaxed text-ink/55">{h.text}</p>
+              {highlights.map((h, i) => {
+                const Icon = highlightIcons[i % highlightIcons.length]
+                return (
+                  <Reveal key={i} delay={0.1 + i * 0.08}>
+                    <div className="card flex items-start gap-4 p-5">
+                      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-wine text-gold">
+                        <Icon size={20} />
+                      </span>
+                      <div>
+                        <h3 className="font-display text-lg font-semibold">{h.title}</h3>
+                        <p className="mt-1 text-sm leading-relaxed text-ink/55">{h.text}</p>
+                      </div>
                     </div>
-                  </div>
-                </Reveal>
-              ))}
+                  </Reveal>
+                )
+              })}
             </div>
 
             <Reveal delay={0.2}>
@@ -104,22 +102,25 @@ export default function Coffee() {
       <section className="bg-cream py-24">
         <div className="container-x">
           <SectionHeading
-            eyebrow="Our Craft"
-            title="How We Brew"
-            subtitle="Three small obsessions that make every cup worth slowing down for."
+            eyebrow={craftHeading.eyebrow || 'Our Craft'}
+            title={craftHeading.title || 'How We Brew'}
+            subtitle={craftHeading.subtitle || 'Three small obsessions that make every cup worth slowing down for.'}
           />
           <div className="grid gap-6 md:grid-cols-3">
-            {craft.map((c, i) => (
-              <Reveal key={c.title} delay={i * 0.1}>
-                <div className="card h-full p-8 text-center">
-                  <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-wine text-gold">
-                    <c.icon size={26} />
-                  </span>
-                  <h3 className="mt-5 font-display text-xl font-semibold">{c.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-ink/60">{c.text}</p>
-                </div>
-              </Reveal>
-            ))}
+            {craft.map((c, i) => {
+              const Icon = craftIcons[i % craftIcons.length]
+              return (
+                <Reveal key={i} delay={i * 0.1}>
+                  <div className="card h-full p-8 text-center">
+                    <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-wine text-gold">
+                      <Icon size={26} />
+                    </span>
+                    <h3 className="mt-5 font-display text-xl font-semibold">{c.title}</h3>
+                    <p className="mt-3 text-sm leading-relaxed text-ink/60">{c.text}</p>
+                  </div>
+                </Reveal>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -127,9 +128,9 @@ export default function Coffee() {
       <section className="py-24">
         <div className="container-x">
           <SectionHeading
-            eyebrow="Customer Favourites"
-            title="Start With These"
-            subtitle="The drinks and bites our guests order again and again."
+            eyebrow={favouritesHeading.eyebrow || 'Customer Favourites'}
+            title={favouritesHeading.title || 'Start With These'}
+            subtitle={favouritesHeading.subtitle || 'The drinks and bites our guests order again and again.'}
           />
           {signature.length ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">

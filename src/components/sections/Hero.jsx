@@ -19,7 +19,7 @@ export default function Hero() {
   return (
     <section ref={ref} className="relative flex min-h-screen items-center justify-center overflow-hidden">
       <motion.div style={{ y }} className="absolute inset-0 -z-10 scale-110">
-        <img src={images.hero} alt="A warm cup of coffee at Nako Cafe" className="h-full w-full object-cover" />
+        <img src={settings.heroImage || images.hero} alt="A warm cup of coffee at Nako Cafe" className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/45 to-[var(--bg)]" />
       </motion.div>

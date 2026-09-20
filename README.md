@@ -31,8 +31,9 @@ Live site: **https://nako-cafe-lakeside.vercel.app/**
 - **Reservations** — confirm / cancel / delete
 - **Messages** — read / unread / delete
 - **Reviews** — publish / delete
-- **Content Editor** — every section's text (hero, about, mission, barista, favourites, events, gallery, reviews, CTA, footer)
+- **Content Editor** — every section's text (hero, about, mission, barista, favourites, events, gallery, reviews, CTA, footer), every page header banner, homepage stats & numbers, about value cards, amenities & atmosphere groups, coffee page (intro, "why it's a legend", how we brew), and barista counters
 - **Settings** — business info, hours, social links, map query
+- **Images** — upload/replace every site image (hero, about, barista, CTA, coffee) plus menu/event/gallery photos; files are validated, resized and compressed to WebP automatically
 
 Every admin action shows a clear success/error message. Confirmation is required before any delete.
 
@@ -130,7 +131,9 @@ Create an account at [emailjs.com](https://www.emailjs.com), add your service + 
 
 ## 🖼️ Images
 
-Administrators can change images for menu items, events, gallery and any section that uses dynamic content. When you select a file the browser validates it (JPG/PNG/WebP, under 5 MB), resizes oversized images, converts to WebP and uploads to Supabase storage (or stores an optimized data-URL in localStorage demo mode).
+**Everything on the site is editable from the admin panel and stored in the database.** All site images (hero, about photos, barista, CTA banner, coffee page) are admin-manageable via the Content Editor; menu/event/gallery images are managed in their own sections. Every image is uploaded as an optimized WebP file (validated for type/size, resized to a maximum of 1600px, re-encoded at ~0.82 quality), stored in the Supabase `ncl-content` bucket (or an optimized data-URL in localStorage demo mode), and the resulting URL is saved to the database.
+
+Structured blocks (homepage stats, about value cards, amenities & atmosphere, coffee-page content, barista counters, page-header banners) are stored in the `sections` JSONB column of `ncl_settings` and edited in the Content Editor.
 
 ---
 

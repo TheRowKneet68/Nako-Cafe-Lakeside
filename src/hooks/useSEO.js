@@ -21,7 +21,7 @@ function setMeta(name, content) {
   el.setAttribute('content', content)
 }
 
-export function useSEO({ title, description, jsonLd } = {}) {
+export function useSEO({ title, description, image, jsonLd } = {}) {
   useEffect(() => {
     const t = title
       ? `${title} | Nako Cafe`
@@ -32,7 +32,7 @@ export function useSEO({ title, description, jsonLd } = {}) {
     setMeta('og:description', description || SITE.description)
     setMeta('og:type', 'website')
     setMeta('og:url', window.location.href)
-    setMeta('og:image', SITE.image)
+    setMeta('og:image', image || SITE.image)
     setMeta('twitter:card', 'summary_large_image')
 
     if (jsonLd) {
@@ -45,5 +45,5 @@ export function useSEO({ title, description, jsonLd } = {}) {
       }
       el.textContent = JSON.stringify(jsonLd)
     }
-  }, [title, description, jsonLd])
+  }, [title, description, image, jsonLd])
 }
