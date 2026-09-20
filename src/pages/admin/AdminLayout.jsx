@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import { adminLogout } from '../../services/auth.js'
 import { onNotify } from '../../services/notify.js'
+import { hasSupabase } from '../../services/supabaseClient.js'
 import { useData } from '../../context/DataContext.jsx'
 import { useTheme } from '../../hooks/useTheme.js'
 
@@ -216,7 +217,18 @@ export default function AdminLayout() {
           </button>
         </header>
 
-        <main className="mx-auto max-w-6xl p-5 lg:p-8">{<Outlet />}</main>
+        <main className="mx-auto max-w-6xl p-5 lg:p-8">
+          {!hasSupabase && (
+            <div className="mb-6 rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+              <strong className="font-semibold">Demo mode.</strong> The database isn't connected, so
+              changes — including uploaded images — are saved only in this browser and won't appear
+              on the live site or in other browsers. Add <code className="font-mono">VITE_SUPABASE_URL</code>{' '}
+              and <code className="font-mono">VITE_SUPABASE_ANON_KEY</code> in Vercel (see the README),
+              then redeploy to go live.
+            </div>
+          )}
+          <Outlet />
+        </main>
       </div>
     </div>
   )
