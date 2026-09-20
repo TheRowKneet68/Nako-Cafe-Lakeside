@@ -1,12 +1,21 @@
 import { Mail, MailOpen, Trash2 } from 'lucide-react'
 import { useData } from '../../context/DataContext.jsx'
 import { EmptyState } from '../../components/admin/ui.jsx'
+import { notify } from '../../services/notify.js'
 
 export default function AdminMessages() {
   const { messages, update, remove } = useData()
 
-  const handleDelete = (m) => {
-    if (window.confirm('Delete this message?')) remove('messages', m.id)
+  const toggleRead = async (m) => {
+    const res = await update('messages', m.id, { read: !m.read })
+    if (!res?.ok) notify("We couldn't update this message. Please try again.", 'error')
+  }
+
+  const handleDelete = async (m) => {
+    if (!window.confirm('Delete this message? This can\'t be undone.')) return
+    const res = await remove('messages', m.id)
+    if (!res?.ok) notify("We couldn't delete this message. Please try again.", 'error')
+    else notify('Message deleted.')
   }
 
   return (
@@ -36,7 +45,7 @@ export default function AdminMessages() {
               </div>
               <div className="flex shrink-0 items-center gap-2">
                 <button
-                  onClick={() => update('messages', m.id, { read: !m.read })}
+                  onClick={() => toggleRead(m)}
                   className="flex items-center gap-2 rounded-lg border border-line/10 px-3 py-2 text-xs text-ink/60 transition hover:border-gold hover:text-gold"
                   aria-label="Toggle read"
                 >

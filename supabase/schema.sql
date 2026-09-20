@@ -188,14 +188,16 @@ alter table public.ncl_profiles     enable row level security;
 -- Grant the app roles base privileges (RLS still enforces what each
 -- role may actually do).
 grant select on public.ncl_categories, public.ncl_foods, public.ncl_gallery,
-  public.ncl_events, public.ncl_reviews, public.ncl_messages,
+  public.ncl_events, public.ncl_reviews,
   public.ncl_settings, public.ncl_profiles to anon, authenticated;
+grant select on public.ncl_messages to authenticated;
 grant insert, update, delete on public.ncl_categories, public.ncl_foods,
   public.ncl_gallery, public.ncl_events, public.ncl_reviews,
   public.ncl_messages, public.ncl_settings, public.ncl_reservations,
   public.ncl_profiles to authenticated;
 grant select on public.ncl_analytics to anon, authenticated;
 grant select, insert on public.ncl_reservations to anon, authenticated;
+grant insert on public.ncl_reviews, public.ncl_messages to anon, authenticated;
 
 -- ---------- Role helper ----------
 -- Returns the caller's access role ('' when they have no profile yet).
@@ -224,12 +226,13 @@ create trigger on_auth_user_created_ncl
 -- they simply have no ncl_profiles row and read publicly until assigned a role.
 
 -- ---------- Content: everyone can read; staff (admin/employee) can write ----------
+-- NOTE: ncl_messages is intentionally NOT here — contact messages are private.
 do $$
 declare
   p text;
   t text;
 begin
-  foreach t in array array['ncl_categories','ncl_foods','ncl_gallery','ncl_events','ncl_reviews','ncl_messages']
+  foreach t in array array['ncl_categories','ncl_foods','ncl_gallery','ncl_events','ncl_reviews']
   loop
     p := '_read_' || t;
     execute format('drop policy if exists %I on public.%I;', p, t);
@@ -242,6 +245,27 @@ begin
     );
   end loop;
 end $$;
+
+-- ---------- Reviews ----------
+-- The review form on the public site lets anyone submit a review…
+drop policy if exists _insert_ncl_reviews on public.ncl_reviews;
+create policy _insert_ncl_reviews on public.ncl_reviews
+  for insert to anon, authenticated
+  with check (char_length(coalesce(name, '')) between 1 and 80 and char_length(coalesce(text, '')) between 1 and 2000);
+
+-- ---------- Messages (contact form) ----------
+-- Contact messages are PRIVATE: never publicly readable, staff-only to read
+-- and manage. Public visitors can still submit one through the contact form.
+drop policy if exists _staff_ncl_messages on public.ncl_messages;
+create policy _staff_ncl_messages on public.ncl_messages
+  for all to authenticated
+  using (public.ncl_app_role() in ('admin', 'employee'))
+  with check (public.ncl_app_role() in ('admin', 'employee'));
+
+drop policy if exists _insert_ncl_messages on public.ncl_messages;
+create policy _insert_ncl_messages on public.ncl_messages
+  for insert to anon, authenticated
+  with check (char_length(coalesce(name, '')) between 1 and 120 and char_length(coalesce(message, '')) between 1 and 2000);
 
 -- ---------- Reservations ----------
 -- Public visitors can submit a booking (always 'pending'); the data is

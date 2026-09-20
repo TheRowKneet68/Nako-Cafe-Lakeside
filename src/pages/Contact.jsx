@@ -19,6 +19,7 @@ export default function Contact() {
 
   const { add, settings } = useData()
   const [sent, setSent] = useState(false)
+  const [submitError, setSubmitError] = useState('')
   const {
     register,
     handleSubmit,
@@ -27,7 +28,12 @@ export default function Contact() {
   } = useForm()
 
   const onSubmit = async (data) => {
-    await add('messages', { ...data, read: false })
+    const res = await add('messages', { ...data, read: false })
+    if (!res?.ok) {
+      setSubmitError("We couldn't send your message right now. Please try again or call us.")
+      return
+    }
+    setSubmitError('')
     await sendEmail({
       to_name: settings.name,
       subject: `[Nako Cafe] ${data.subject}`,
@@ -152,6 +158,11 @@ export default function Contact() {
                     <Instagram size={17} /> Follow on Instagram
                   </a>
                 </div>
+                {submitError && (
+                  <p className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+                    {submitError}
+                  </p>
+                )}
                 <AnimatePresence>
                   {sent && (
                     <motion.p

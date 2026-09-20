@@ -2,12 +2,22 @@ import { Trash2 } from 'lucide-react'
 import { useData } from '../../context/DataContext.jsx'
 import { EmptyState } from '../../components/admin/ui.jsx'
 import { formatDate, statusColor } from '../../utils/helpers.js'
+import { notify } from '../../services/notify.js'
 
 export default function AdminReservations() {
   const { reservations, update, remove } = useData()
 
-  const handleDelete = (r) => {
-    if (window.confirm(`Delete reservation for ${r.name}?`)) remove('reservations', r.id)
+  const changeStatus = async (r, status) => {
+    const res = await update('reservations', r.id, { status })
+    if (!res?.ok) notify("We couldn't update this reservation. Please try again.", 'error')
+    else notify(`Reservation marked as ${status}.`)
+  }
+
+  const handleDelete = async (r) => {
+    if (!window.confirm(`Delete reservation for ${r.name}? This can't be undone.`)) return
+    const res = await remove('reservations', r.id)
+    if (!res?.ok) notify("We couldn't delete this reservation. Please try again.", 'error')
+    else notify('Reservation deleted.')
   }
 
   return (
@@ -40,7 +50,7 @@ export default function AdminReservations() {
               <div className="flex shrink-0 items-center gap-3">
                 <select
                   value={r.status}
-                  onChange={(e) => update('reservations', r.id, { status: e.target.value })}
+                  onChange={(e) => changeStatus(r, e.target.value)}
                   className="select !w-36 !py-2"
                   aria-label="Update status"
                 >

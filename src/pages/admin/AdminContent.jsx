@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Save } from 'lucide-react'
 import { useData } from '../../context/DataContext.jsx'
 import { Field } from '../../components/admin/ui.jsx'
+import { notify } from '../../services/notify.js'
 
 const GROUPS = [
   {
@@ -89,13 +90,12 @@ export default function AdminContent() {
   const [form, setForm] = useState(() =>
     Object.fromEntries(GROUPS.flatMap((g) => g.fields.map((f) => [f.key, settings[f.key] || ''])))
   )
-  const [saved, setSaved] = useState(false)
 
-  const save = (e) => {
+  const save = async (e) => {
     e.preventDefault()
-    updateSettings(form)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2500)
+    const res = await updateSettings(form)
+    if (res?.ok) notify('Website content saved successfully.')
+    else notify("We couldn't save the content. Please try again.", 'error')
   }
 
   const set = (key) => (e) => setForm((p) => ({ ...p, [key]: e.target.value }))
@@ -109,9 +109,6 @@ export default function AdminContent() {
             Edit every piece of text on the website — it updates instantly across all pages.
           </p>
         </div>
-        {saved && (
-          <span className="rounded-full bg-green-500/15 px-4 py-2 text-sm text-green-400">Saved ✓</span>
-        )}
       </div>
 
       <form onSubmit={save} className="space-y-6">

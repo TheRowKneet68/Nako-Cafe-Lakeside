@@ -4,6 +4,7 @@ import { useData } from '../../context/DataContext.jsx'
 import { Modal, Field, EmptyState } from '../../components/admin/ui.jsx'
 import RatingStars from '../../components/ui/RatingStars.jsx'
 import { initials } from '../../utils/helpers.js'
+import { notify } from '../../services/notify.js'
 
 const empty = { name: '', location: '', rating: 4.5, text: '' }
 
@@ -14,13 +15,22 @@ export default function AdminReviews() {
 
   const save = async (e) => {
     e.preventDefault()
-    await add('reviews', { ...form, rating: Number(form.rating) || 4.5 })
+    if (!form.name.trim() || !form.text.trim()) return
+    const res = await add('reviews', { ...form, rating: Number(form.rating) || 4.5 })
+    if (!res?.ok) {
+      notify("We couldn't publish this review. Please try again.", 'error')
+      return
+    }
     setModal(false)
     setForm(empty)
+    notify('Review published.')
   }
 
-  const handleDelete = (r) => {
-    if (window.confirm(`Delete review by ${r.name}?`)) remove('reviews', r.id)
+  const handleDelete = async (r) => {
+    if (!window.confirm(`Delete review by ${r.name}? This can't be undone.`)) return
+    const res = await remove('reviews', r.id)
+    if (!res?.ok) notify("We couldn't delete this review. Please try again.", 'error')
+    else notify('Review deleted.')
   }
 
   return (

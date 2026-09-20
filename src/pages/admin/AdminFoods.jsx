@@ -4,6 +4,7 @@ import { useData } from '../../context/DataContext.jsx'
 import { Modal, Field, ImageInput, EmptyState } from '../../components/admin/ui.jsx'
 import { VegBadge, SpicyIndicator } from '../../components/ui/Badges.jsx'
 import { formatPrice } from '../../utils/helpers.js'
+import { notify } from '../../services/notify.js'
 
 const empty = {
   name: '',
@@ -47,8 +48,13 @@ export default function AdminFoods() {
     e.preventDefault()
     let category = form.category
     if (newCat.trim()) {
-      await addCategory(newCat.trim())
-      category = newCat.trim()
+      const catRes = await addCategory(newCat.trim())
+      if (!catRes?.ok) {
+        notify("We couldn't add that category. Please try again.", 'error')
+        return
+      }
+      category = catRes.category.id
+      notify(`Category "${newCat.trim()}" added.`)
     }
     const payload = {
       ...form,
@@ -57,14 +63,23 @@ export default function AdminFoods() {
       spicy: Number(form.spicy) || 0,
       rating: Number(form.rating) || 4.5
     }
-    if (editing) await update('foods', editing.id, payload)
-    else await add('foods', payload)
+    const res = editing
+      ? await update('foods', editing.id, payload)
+      : await add('foods', payload)
+    if (!res?.ok) {
+      notify("We couldn't save this item. Please check the information and try again.", 'error')
+      return
+    }
     setModal(false)
     setNewCat('')
+    notify(editing ? 'Menu item updated successfully.' : 'Menu item added successfully.')
   }
 
-  const handleDelete = (f) => {
-    if (window.confirm(`Delete "${f.name}" from the menu?`)) remove('foods', f.id)
+  const handleDelete = async (f) => {
+    if (!window.confirm(`Delete "${f.name}" from the menu? This can't be undone.`)) return
+    const res = await remove('foods', f.id)
+    if (!res?.ok) notify("We couldn't delete this item. Please try again.", 'error')
+    else notify('Menu item deleted.')
   }
 
   return (

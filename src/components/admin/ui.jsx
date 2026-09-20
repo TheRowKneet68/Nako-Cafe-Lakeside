@@ -1,16 +1,26 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ImagePlus, X } from 'lucide-react'
+import { ImagePlus, Loader2, X } from 'lucide-react'
+import { uploadImage } from '../../services/upload.js'
 
 export function Modal({ open, onClose, title, children, wide = false }) {
+  const dialogRef = useRef(null)
+  const closeRef = useRef(null)
+  const lastFocused = useRef(null)
+
   useEffect(() => {
     if (!open) return
-    const onKey = (e) => e.key === 'Escape' && onClose()
+    lastFocused.current = document.activeElement
+    closeRef.current?.focus()
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose()
+    }
     document.body.style.overflow = 'hidden'
     window.addEventListener('keydown', onKey)
     return () => {
       document.body.style.overflow = ''
       window.removeEventListener('keydown', onKey)
+      lastFocused.current?.focus?.()
     }
   }, [open, onClose])
 
@@ -25,6 +35,10 @@ export function Modal({ open, onClose, title, children, wide = false }) {
           onClick={onClose}
         >
           <motion.div
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={title}
             onClick={(e) => e.stopPropagation()}
             initial={{ y: 30, scale: 0.97, opacity: 0 }}
             animate={{ y: 0, scale: 1, opacity: 1 }}
@@ -35,6 +49,7 @@ export function Modal({ open, onClose, title, children, wide = false }) {
             <div className="mb-5 flex items-center justify-between">
               <h2 className="font-display text-xl font-bold">{title}</h2>
               <button
+                ref={closeRef}
                 onClick={onClose}
                 className="grid h-9 w-9 place-items-center rounded-full border border-line/10 transition hover:border-gold hover:text-gold"
                 aria-label="Close"
@@ -63,13 +78,19 @@ export function Field({ label, children }) {
 
 export function ImageInput({ value, onChange, label = 'Image' }) {
   const fileRef = useRef()
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
 
-  const onFile = (e) => {
+  const onFile = async (e) => {
     const file = e.target.files?.[0]
     if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => onChange(reader.result)
-    reader.readAsDataURL(file)
+    setBusy(true)
+    setErr('')
+    const res = await uploadImage(file)
+    setBusy(false)
+    e.target.value = ''
+    if (!res.ok) return setErr(res.error)
+    onChange(res.url)
   }
 
   return (
@@ -91,20 +112,25 @@ export function ImageInput({ value, onChange, label = 'Image' }) {
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="grid h-16 w-16 shrink-0 place-items-center rounded-lg border border-dashed border-line/25 text-ink/50 transition hover:border-gold hover:text-gold"
+            disabled={busy}
+            className="grid h-16 w-16 shrink-0 place-items-center rounded-lg border border-dashed border-line/25 text-ink/50 transition hover:border-gold hover:text-gold disabled:opacity-60"
             aria-label="Upload image"
           >
-            <ImagePlus size={20} />
+            {busy ? <Loader2 size={20} className="animate-spin" /> : <ImagePlus size={20} />}
           </button>
         )}
-        <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onFile} />
-        <input
-          type="text"
-          className="input"
-          placeholder="or paste an image URL"
-          value={value.startsWith('data:') ? '' : value}
-          onChange={(e) => onChange(e.target.value)}
-        />
+        <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={onFile} />
+        <div className="min-w-0 flex-1">
+          <input
+            type="text"
+            className="input"
+            placeholder="or paste an image URL"
+            value={value.startsWith('data:') ? '' : value}
+            onChange={(e) => onChange(e.target.value)}
+          />
+          {err && <p className="mt-1 text-xs text-red-400">{err}</p>}
+          {busy && <p className="mt-1 text-xs text-ink/50">Uploading image…</p>}
+        </div>
       </div>
     </Field>
   )

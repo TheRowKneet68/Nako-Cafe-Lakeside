@@ -3,6 +3,7 @@ import { Pencil, Plus, Search, Trash2 } from 'lucide-react'
 import { useData } from '../../context/DataContext.jsx'
 import { Modal, Field, ImageInput, EmptyState } from '../../components/admin/ui.jsx'
 import { formatDate } from '../../utils/helpers.js'
+import { notify } from '../../services/notify.js'
 
 const empty = {
   title: '',
@@ -43,13 +44,21 @@ export default function AdminEvents() {
 
   const save = async (ev) => {
     ev.preventDefault()
-    if (editing) await update('events', editing.id, form)
-    else await add('events', form)
+    if (!form.title || !form.date) return
+    const res = editing ? await update('events', editing.id, form) : await add('events', form)
+    if (!res?.ok) {
+      notify("We couldn't save this event. Please check the information and try again.", 'error')
+      return
+    }
     setModal(false)
+    notify(editing ? 'Event updated successfully.' : 'Event added successfully.')
   }
 
-  const handleDelete = (e) => {
-    if (window.confirm(`Delete "${e.title}"?`)) remove('events', e.id)
+  const handleDelete = async (e) => {
+    if (!window.confirm(`Delete "${e.title}"? This can't be undone.`)) return
+    const res = await remove('events', e.id)
+    if (!res?.ok) notify("We couldn't delete this event. Please try again.", 'error')
+    else notify('Event deleted.')
   }
 
   return (

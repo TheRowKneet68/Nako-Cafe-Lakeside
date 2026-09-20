@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
 import { useData } from '../../context/DataContext.jsx'
 import { Modal, Field, ImageInput, EmptyState } from '../../components/admin/ui.jsx'
+import { notify } from '../../services/notify.js'
 
 export default function AdminGallery() {
   const { gallery, add, remove } = useData()
@@ -11,13 +12,21 @@ export default function AdminGallery() {
   const save = async (e) => {
     e.preventDefault()
     if (!form.src) return
-    await add('gallery', form)
+    const res = await add('gallery', form)
+    if (!res?.ok) {
+      notify("We couldn't add this photo. Please try again.", 'error')
+      return
+    }
     setModal(false)
     setForm({ src: '', alt: '', category: 'Interior' })
+    notify('Photo added to the gallery.')
   }
 
-  const handleDelete = (item) => {
-    if (window.confirm('Delete this gallery image?')) remove('gallery', item.id)
+  const handleDelete = async (item) => {
+    if (!window.confirm('Delete this gallery image? This can\'t be undone.')) return
+    const res = await remove('gallery', item.id)
+    if (!res?.ok) notify("We couldn't delete this photo. Please try again.", 'error')
+    else notify('Photo deleted.')
   }
 
   return (

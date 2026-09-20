@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 const SITE = {
   name: 'Nako Cafe',
-  url: 'https://nakocafe.com.np',
+  url: 'https://nako-cafe-lakeside.vercel.app',
   description:
     'Specialty coffee from carefully selected Nepali beans in Lakeside, Pokhara. Spanish Latte, espresso, pour over & fresh pastries. Open daily 7 AM – 9 PM. Rated 4.9/5.',
   image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1920&q=80'

@@ -18,12 +18,13 @@ export default function ReviewForm() {
     if (name.trim().length < 2) return setError('Please enter your name.')
     if (text.trim().length < 10) return setError('Please write at least one full sentence (10+ characters).')
     setError('')
-    await add('reviews', {
+    const res = await add('reviews', {
       name: name.trim(),
       location: location.trim() || 'Guest',
       rating,
       text: text.trim()
     })
+    if (!res?.ok) return setError("We couldn't submit your review right now. Please try again.")
     setName('')
     setLocation('')
     setText('')

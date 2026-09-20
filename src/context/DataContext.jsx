@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { supabase } from '../services/supabaseClient.js'
 import { trackVisit, getVisits } from '../services/analytics.js'
 import { defaultCategories } from '../data/categories.js'
@@ -42,6 +42,14 @@ function load(key, fallback) {
 
 const uid = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
 
+// Fields the DB owns; never send them on insert/update.
+function stripSystem(row) {
+  const { id: _id, created_at: _ca, ...rest } = row || {}
+  const clean = {}
+  for (const [k, v] of Object.entries(rest)) if (v !== undefined) clean[k] = v
+  return clean
+}
+
 export function DataProvider({ children }) {
   const [foods, setFoods] = useState(() => load(KEYS.foods, defaultFoods))
   const [categories, setCategories] = useState(() => load(KEYS.categories, defaultCategories))
@@ -68,32 +76,7 @@ export function DataProvider({ children }) {
     getVisits().then(setVisits)
   }, [])
 
-  useEffect(() => {
-    if (!supabase) return
-    ;(async () => {
-      try {
-        const setters = {
-          foods: setFoods,
-          categories: setCategories,
-          gallery: setGallery,
-          reviews: setReviews,
-          events: setEvents,
-          reservations: setReservations,
-          messages: setMessages
-        }
-        for (const key of Object.keys(TABLES)) {
-          const { data, error } = await supabase.from(TABLES[key]).select('*')
-          if (!error && data?.length) setters[key](data)
-        }
-        const { data: s } = await supabase.from('ncl_settings').select('*').maybeSingle()
-        if (s) setSettings((prev) => ({ ...prev, ...s }))
-      } catch (err) {
-        console.warn('Supabase sync skipped — running with local data.', err)
-      }
-    })()
-  }, [])
-
-  const setters = {
+  const setters = useRef({
     foods: setFoods,
     categories: setCategories,
     gallery: setGallery,
@@ -101,33 +84,93 @@ export function DataProvider({ children }) {
     events: setEvents,
     reservations: setReservations,
     messages: setMessages
+  })
+
+  // Pull every table from Supabase and trust the DB (local storage is just a
+  // demo/offline cache). Runs on mount and again when a staff member signs in.
+  const syncAll = async () => {
+    if (!supabase) return
+    for (const key of Object.keys(TABLES)) {
+      const { data, error } = await supabase.from(TABLES[key]).select('*')
+      if (!error && data?.length) setters.current[key](data)
+    }
+    const { data: s } = await supabase.from('ncl_settings').select('*').maybeSingle()
+    if (s) setSettings((prev) => ({ ...prev, ...s }))
+    const visitsValue = await getVisits()
+    setVisits(Number(visitsValue) || 0)
   }
 
+  // Initial sync (anon data) + re-sync on auth changes so RLS-protected
+  // tables (reservations, messages) populate once a staff member logs in.
+  useEffect(() => {
+    if (!supabase) return
+    syncAll().catch(() => {})
+    const { data: sub } = supabase.auth.onAuthStateChange((_event) => {
+      syncAll().catch(() => {})
+    })
+    return () => sub.subscription.unsubscribe()
+  }, [])
+
   async function add(key, item) {
-    const row = { ...item, id: item.id || uid() }
-    setters[key]((p) => [row, ...p])
-    if (supabase) await supabase.from(TABLES[key]).insert(row)
+    if (supabase) {
+      const { data, error } = await supabase
+        .from(TABLES[key])
+        .insert(stripSystem(item))
+        .select()
+        .single()
+      if (error) return { ok: false, error }
+      setters.current[key]((p) => [data, ...p.filter((x) => x.id !== data.id)])
+      return { ok: true, data }
+    }
+    const row = { ...stripSystem(item), id: item?.id || uid() }
+    setters.current[key]((p) => [row, ...p])
+    return { ok: true, data: row }
   }
 
   async function update(key, itemId, patch) {
-    setters[key]((p) => p.map((x) => (x.id === itemId ? { ...x, ...patch } : x)))
-    if (supabase) await supabase.from(TABLES[key]).update(patch).eq('id', itemId)
+    if (supabase) {
+      const { data, error } = await supabase
+        .from(TABLES[key])
+        .update(stripSystem(patch))
+        .eq('id', itemId)
+        .select()
+        .single()
+      if (error) return { ok: false, error }
+      setters.current[key]((p) => p.map((x) => (x.id === itemId ? { ...x, ...data } : x)))
+      return { ok: true, data }
+    }
+    setters.current[key]((p) => p.map((x) => (x.id === itemId ? { ...x, ...patch } : x)))
+    return { ok: true }
   }
 
   async function remove(key, itemId) {
-    setters[key]((p) => p.filter((x) => x.id !== itemId))
-    if (supabase) await supabase.from(TABLES[key]).delete().eq('id', itemId)
+    if (supabase) {
+      const { error } = await supabase.from(TABLES[key]).delete().eq('id', itemId)
+      if (error) return { ok: false, error }
+    }
+    setters.current[key]((p) => p.filter((x) => x.id !== itemId))
+    return { ok: true }
   }
 
-  function addCategory(name) {
+  async function addCategory(name) {
+    if (supabase) {
+      const { data, error } = await supabase.from('ncl_categories').insert({ name }).select().single()
+      if (error) return { ok: false, error }
+      setCategories((p) => [...p, data])
+      return { ok: true, category: data }
+    }
     const cat = { id: uid(), name }
     setCategories((p) => [...p, cat])
-    if (supabase) supabase.from('ncl_categories').insert(cat)
+    return { ok: true, category: cat }
   }
 
   function updateSettings(patch) {
     setSettings((p) => ({ ...p, ...patch }))
-    if (supabase) supabase.from('ncl_settings').upsert({ id: 1, ...patch })
+    if (!supabase) return Promise.resolve({ ok: true })
+    return supabase
+      .from('ncl_settings')
+      .upsert({ id: 1, ...stripSystem(patch) })
+      .then(({ error }) => (error ? { ok: false, error } : { ok: true }))
   }
 
   function resetData() {

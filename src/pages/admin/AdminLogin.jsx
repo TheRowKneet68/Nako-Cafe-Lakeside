@@ -5,17 +5,31 @@ import { Lock, LogIn, Moon, Sun, UtensilsCrossed } from 'lucide-react'
 import { adminLogin } from '../../services/auth.js'
 import { useTheme } from '../../hooks/useTheme.js'
 
+const MESSAGES = {
+  'not-configured':
+    "This site hasn't been set up for admin login yet. The owner needs to configure the admin credentials (see the README).",
+  invalid: 'That email and password combination is not correct.',
+  forbidden: 'This account does not have admin access.',
+  error: "We couldn't sign you in right now. Please try again in a moment."
+}
+
 export default function AdminLogin() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
   const [dark, setDark] = useTheme()
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault()
-    if (adminLogin(email, password)) navigate('/admin')
-    else setError('Invalid credentials. Try admin@nakocafe.com.np / admin123.')
+    if (!email.trim() || !password) return setError('Please enter both your email and password.')
+    setBusy(true)
+    setError('')
+    const res = await adminLogin(email, password)
+    setBusy(false)
+    if (res?.ok) navigate('/admin')
+    else setError(MESSAGES[res?.reason] || MESSAGES.error)
   }
 
   return (
@@ -52,7 +66,7 @@ export default function AdminLogin() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="input"
-              placeholder="admin@nakocafe.com.np"
+              placeholder="you@example.com"
               required
             />
           </div>
@@ -70,11 +84,11 @@ export default function AdminLogin() {
             />
           </div>
           {error && <p className="text-xs text-red-400">{error}</p>}
-          <button type="submit" className="btn-gold w-full">
-            <LogIn size={16} /> Sign In
+          <button type="submit" disabled={busy} className="btn-gold w-full disabled:opacity-60">
+            {busy ? <span className="animate-pulse">Signing in…</span> : (<><LogIn size={16} /> Sign In</>)}
           </button>
           <p className="flex items-center justify-center gap-1.5 text-center text-[11px] text-ink/40">
-            <Lock size={12} /> Default: admin@nakocafe.com.np / admin123
+            <Lock size={12} /> This area is for Nako Cafe staff only.
           </p>
         </form>
       </motion.div>

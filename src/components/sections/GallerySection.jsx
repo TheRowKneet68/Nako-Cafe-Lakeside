@@ -18,6 +18,9 @@ function Lightbox({ index, items, onClose, onNav }) {
     <AnimatePresence>
       {index !== null && (
         <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Photo viewer"
           className="fixed inset-0 z-[95] flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

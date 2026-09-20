@@ -2,26 +2,27 @@ import { useState } from 'react'
 import { Save } from 'lucide-react'
 import { useData } from '../../context/DataContext.jsx'
 import { Field } from '../../components/admin/ui.jsx'
+import { notify } from '../../services/notify.js'
+import { defaultSettings } from '../../data/siteData.js'
 
 export default function AdminSettings() {
   const { settings, updateSettings, resetData } = useData()
   const [form, setForm] = useState({ ...settings })
-  const [saved, setSaved] = useState(false)
 
-  const save = (e) => {
+  const save = async (e) => {
     e.preventDefault()
-    updateSettings(form)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2500)
+    const res = await updateSettings(form)
+    if (res?.ok) notify('Settings saved successfully.')
+    else notify("We couldn't save the settings. Please try again.", 'error')
   }
 
   const set = (key) => (e) => setForm((p) => ({ ...p, [key]: e.target.value }))
 
-  const handleReset = () => {
-    if (window.confirm('Reset ALL data (menu, gallery, reviews, reservations, messages) to defaults?')) {
-      resetData()
-      setForm({ ...settings })
-    }
+  const handleReset = async () => {
+    if (!window.confirm('Reset ALL data (menu, gallery, reviews, reservations, messages) to defaults? This can\'t be undone.')) return
+    resetData()
+    setForm({ ...defaultSettings })
+    notify('All data has been reset to defaults.')
   }
 
   return (
@@ -31,7 +32,6 @@ export default function AdminSettings() {
           <h1 className="font-display text-3xl font-bold">Settings</h1>
           <p className="mt-1 text-sm text-ink/50">Business information shown across the site.</p>
         </div>
-        {saved && <span className="rounded-full bg-green-500/15 px-4 py-2 text-sm text-green-400">Saved ✓</span>}
       </div>
 
       <form onSubmit={save} className="card grid gap-5 p-6 sm:grid-cols-2">

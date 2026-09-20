@@ -28,6 +28,7 @@ export default function Reservation() {
 
   const { add, settings } = useData()
   const [submitted, setSubmitted] = useState(null)
+  const [submitError, setSubmitError] = useState('')
   const {
     register,
     handleSubmit,
@@ -39,7 +40,12 @@ export default function Reservation() {
 
   const onSubmit = async (data) => {
     const reservation = { ...data, status: 'pending' }
-    await add('reservations', reservation)
+    const res = await add('reservations', reservation)
+    if (!res?.ok) {
+      setSubmitError("We couldn't save your reservation right now. Please try again or call us.")
+      return
+    }
+    setSubmitError('')
     await sendEmail({
       to_name: settings.name,
       subject: `Reservation request · ${data.name}`,
@@ -174,6 +180,11 @@ export default function Reservation() {
               <button type="submit" className="btn-gold mt-6 w-full">
                 <CalendarCheck size={18} /> Confirm Reservation
               </button>
+              {submitError && (
+                <p className="mt-3 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+                  {submitError}
+                </p>
+              )}
             </form>
           </Reveal>
 

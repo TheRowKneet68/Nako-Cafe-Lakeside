@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   CalendarCheck,
   CalendarRange,
+  CheckCircle2,
   ExternalLink,
   Image,
   LayoutDashboard,
@@ -16,11 +17,56 @@ import {
   Star,
   Sun,
   UtensilsCrossed,
-  X
+  X,
+  XCircle
 } from 'lucide-react'
 import { adminLogout } from '../../services/auth.js'
+import { onNotify } from '../../services/notify.js'
 import { useData } from '../../context/DataContext.jsx'
 import { useTheme } from '../../hooks/useTheme.js'
+
+function Toasts() {
+  const [toasts, setToasts] = useState([])
+  const timers = useRef(new Map())
+
+  useEffect(() => {
+    const off = onNotify(({ message, tone, id }) => {
+      setToasts((t) => [...t, { message, tone, id }])
+      const timer = setTimeout(() => {
+        setToasts((t) => t.filter((x) => x.id !== id))
+        timers.current.delete(id)
+      }, 4500)
+      timers.current.set(id, timer)
+    })
+    return () => {
+      off()
+      timers.current.forEach(clearTimeout)
+    }
+  }, [])
+
+  return (
+    <div className="pointer-events-none fixed bottom-5 right-5 z-[100] flex flex-col gap-2.5">
+      <AnimatePresence>
+        {toasts.map((t) => (
+          <motion.div
+            key={t.id}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, x: 40 }}
+            className={`pointer-events-auto flex items-center gap-2.5 rounded-lg px-4 py-3 text-sm shadow-xl ${
+              t.tone === 'error'
+                ? 'bg-red-600 text-white'
+                : 'bg-emerald-600 text-white'
+            }`}
+          >
+            {t.tone === 'error' ? <XCircle size={16} /> : <CheckCircle2 size={16} />}
+            {t.message}
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
+  )
+}
 
 const items = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
@@ -116,6 +162,7 @@ export default function AdminLayout() {
 
   return (
     <div className="flex min-h-screen bg-night">
+      <Toasts />
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-line/10 bg-night p-5 lg:flex">
         {nav}
       </aside>
