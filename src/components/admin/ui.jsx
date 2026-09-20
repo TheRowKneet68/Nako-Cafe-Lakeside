@@ -7,22 +7,31 @@ export function Modal({ open, onClose, title, children, wide = false }) {
   const dialogRef = useRef(null)
   const closeRef = useRef(null)
   const lastFocused = useRef(null)
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
 
+  // Run only when the modal opens/closes — NOT on every parent re-render.
+  // (Admin pages pass an inline `onClose`, so depending on it here would
+  // steal focus back to the Close button after every keystroke.)
   useEffect(() => {
     if (!open) return
     lastFocused.current = document.activeElement
     closeRef.current?.focus()
-    const onKey = (e) => {
-      if (e.key === 'Escape') onClose()
-    }
     document.body.style.overflow = 'hidden'
-    window.addEventListener('keydown', onKey)
     return () => {
       document.body.style.overflow = ''
-      window.removeEventListener('keydown', onKey)
       lastFocused.current?.focus?.()
     }
-  }, [open, onClose])
+  }, [open])
+
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => {
+      if (e.key === 'Escape') onCloseRef.current()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
 
   return (
     <AnimatePresence>
