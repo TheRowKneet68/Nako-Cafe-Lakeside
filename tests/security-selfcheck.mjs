@@ -26,4 +26,13 @@ assert.equal(escapeHtml(undefined), '')
 assert.equal(escapeHtml(123), '123')
 assert.equal(escapeHtml('2 < 3 & 4 > 1'), '2 &lt; 3 &amp; 4 &gt; 1')
 
-console.log(`escapeHtml passed ${payloads.length + 4} assertions`)
+// Regression guard: the data modules must import without errors. A TDZ
+// "can't access lexical declaration before initialization" crash here used to
+// take down the whole deployed site (defaultSettings referenced images /
+// defaultSections before they were declared).
+const { defaultSettings } = await import('../src/data/siteData.js')
+assert.ok(defaultSettings.heroImage?.startsWith('https://'), 'defaultSettings.heroImage missing')
+assert.ok(defaultSettings.sections?.stats?.length > 0, 'defaultSettings.sections.stats missing')
+assert.ok(defaultSettings.sections?.pageHeaders?.contact, 'defaultSettings.sections.pageHeaders missing')
+
+console.log(`escapeHtml passed ${payloads.length + 4} assertions; data modules import cleanly`)
