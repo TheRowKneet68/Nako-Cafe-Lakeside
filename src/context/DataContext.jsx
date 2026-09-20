@@ -140,14 +140,15 @@ export function DataProvider({ children }) {
 
   async function add(key, item) {
     if (supabase) {
-      const { data, error } = await supabase
-        .from(TABLES[key])
-        .insert(stripSystem(item))
-        .select()
-        .single()
+      // RLS may hide the inserted row from the caller (public visitors can
+      // INSERT a reservation/message but cannot SELECT private tables). So
+      // insert WITHOUT .single() — a successful insert with an empty read
+      // result is still a success; the row appears after the next sync.
+      const { data, error } = await supabase.from(TABLES[key]).insert(stripSystem(item)).select()
       if (error) return { ok: false, error }
-      setters.current[key]((p) => [data, ...p.filter((x) => x.id !== data.id)])
-      return { ok: true, data }
+      const row = data?.[0] || { ...stripSystem(item), id: item?.id }
+      setters.current[key]((p) => [row, ...p.filter((x) => x.id !== row.id)])
+      return { ok: true, data: row }
     }
     const row = { ...stripSystem(item), id: item?.id || uid() }
     setters.current[key]((p) => [row, ...p])

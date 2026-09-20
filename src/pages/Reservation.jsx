@@ -40,7 +40,16 @@ export default function Reservation() {
   const today = new Date().toISOString().split('T')[0]
 
   const onSubmit = async (data) => {
-    const reservation = { ...data, status: 'pending' }
+    const reservation = {
+      name: String(data.name || '').trim(),
+      phone: String(data.phone || '').trim(),
+      email: (data.email || '').trim() || null,
+      guests: Number(data.guests) || 1,
+      date: data.date,
+      time: data.time,
+      request: (data.request || '').trim() || null,
+      status: 'pending'
+    }
     const res = await add('reservations', reservation)
     if (!res?.ok) {
       setSubmitError("We couldn't save your reservation right now. Please try again or call us.")
