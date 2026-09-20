@@ -293,11 +293,13 @@ create policy _insert_ncl_reservations on public.ncl_reservations
   for insert to anon, authenticated
   with check (status is null or status = 'pending');
 
--- Only admins can see/manage all reservations.
+-- Only staff (admin/employee) can see/manage all reservations. Matches the
+-- other staff policies: any logged-in staff member sees the Reservations tab.
 drop policy if exists _admin_ncl_reservations on public.ncl_reservations;
-create policy _admin_ncl_reservations on public.ncl_reservations
+drop policy if exists _staff_ncl_reservations on public.ncl_reservations;
+create policy _staff_ncl_reservations on public.ncl_reservations
   for all to authenticated
-  using (public.ncl_app_role() = 'admin') with check (public.ncl_app_role() = 'admin');
+  using (public.ncl_app_role() in ('admin', 'employee')) with check (public.ncl_app_role() in ('admin', 'employee'));
 
 -- Clients can see their own reservations (matched on booking email)…
 drop policy if exists _client_read_own_ncl_reservations on public.ncl_reservations;
@@ -319,15 +321,17 @@ create policy _read_ncl_settings on public.ncl_settings
   for select using (true);
 
 drop policy if exists _admin_ncl_settings on public.ncl_settings;
-create policy _admin_ncl_settings on public.ncl_settings
+drop policy if exists _staff_ncl_settings on public.ncl_settings;
+create policy _staff_ncl_settings on public.ncl_settings
   for all to authenticated
-  using (public.ncl_app_role() = 'admin') with check (public.ncl_app_role() = 'admin');
+  using (public.ncl_app_role() in ('admin', 'employee')) with check (public.ncl_app_role() in ('admin', 'employee'));
 
 -- ---------- Analytics ----------
 drop policy if exists _admin_ncl_analytics on public.ncl_analytics;
-create policy _admin_ncl_analytics on public.ncl_analytics
+drop policy if exists _staff_ncl_analytics on public.ncl_analytics;
+create policy _staff_ncl_analytics on public.ncl_analytics
   for all to authenticated
-  using (public.ncl_app_role() = 'admin') with check (public.ncl_app_role() = 'admin');
+  using (public.ncl_app_role() in ('admin', 'employee')) with check (public.ncl_app_role() in ('admin', 'employee'));
 
 -- Visits are written only through the SECURITY DEFINER function below;
 -- public users NEVER write analytics directly.
