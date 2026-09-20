@@ -164,6 +164,17 @@ create table if not exists public.ncl_settings (
   sections jsonb default '{}'::jsonb
 );
 
+-- Columns added after the initial release. Kept immediately after the table
+-- definition (before the seed below) so re-running on an existing database
+-- adds them BEFORE the settings seed references them.
+alter table public.ncl_settings add column if not exists "heroImage" text;
+alter table public.ncl_settings add column if not exists "aboutImage1" text;
+alter table public.ncl_settings add column if not exists "aboutImage2" text;
+alter table public.ncl_settings add column if not exists "chefImage" text;
+alter table public.ncl_settings add column if not exists "ctaImage" text;
+alter table public.ncl_settings add column if not exists "coffeeImage" text;
+alter table public.ncl_settings add column if not exists sections jsonb default '{}'::jsonb;
+
 create table if not exists public.ncl_analytics (
   id uuid primary key default gen_random_uuid(),
   key text unique not null,
@@ -467,15 +478,6 @@ values (
 on conflict (id) do nothing;
 
 -- ---------- Hardening (idempotent — safe to re-run) ----------
-
--- Site image + structured content columns (added after the initial release).
-alter table public.ncl_settings add column if not exists "heroImage" text;
-alter table public.ncl_settings add column if not exists "aboutImage1" text;
-alter table public.ncl_settings add column if not exists "aboutImage2" text;
-alter table public.ncl_settings add column if not exists "chefImage" text;
-alter table public.ncl_settings add column if not exists "ctaImage" text;
-alter table public.ncl_settings add column if not exists "coffeeImage" text;
-alter table public.ncl_settings add column if not exists sections jsonb default '{}'::jsonb;
 
 -- Visit counter: increments server-side only. Public users can never write
 -- arbitrary values into `analytics`; the app calls this function instead.
