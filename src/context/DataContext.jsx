@@ -117,6 +117,7 @@ export function DataProvider({ children }) {
   // demo/offline cache). Runs on mount and again when a staff member signs in.
   const syncAll = async () => {
     if (!supabase) return
+    await seedEmptyTables()
     for (const key of Object.keys(TABLES)) {
       const { data, error } = await supabase.from(TABLES[key]).select('*')
       if (!error && data?.length) setters.current[key](data)
@@ -125,6 +126,48 @@ export function DataProvider({ children }) {
     if (s) setSettings((prev) => ({ ...prev, ...pickDefined(s), sections: mergeSections(s.sections) }))
     const visitsValue = await getVisits()
     setVisits(Number(visitsValue) || 0)
+  }
+
+  // First staff login with an empty database: copy the seed content into
+  // Supabase so the site isn't a hollow shell and the admin can edit real rows.
+  // Best-effort — silently skipped for anonymous visitors (RLS blocks them).
+  const seedEmptyTables = async () => {
+    if (!supabase) return
+    const { data: authUser } = await supabase.auth.getUser()
+    if (!authUser?.user) return
+
+    const catMap = {}
+    const { data: existingCats } = await supabase.from('ncl_categories').select('id').limit(1)
+    if (!existingCats?.length) {
+      for (const c of defaultCategories) {
+        const { data } = await supabase.from('ncl_categories').insert({ name: c.name }).select().single()
+        if (data) catMap[c.id] = data.id
+      }
+    }
+
+    const { data: existingFoods } = await supabase.from('ncl_foods').select('id').limit(1)
+    if (!existingFoods?.length) {
+      for (const f of defaultFoods) {
+        await supabase
+          .from('ncl_foods')
+          .insert({ ...stripSystem(f), category: catMap[f.category] || f.category })
+      }
+    }
+
+    const { data: existingGallery } = await supabase.from('ncl_gallery').select('id').limit(1)
+    if (!existingGallery?.length) {
+      for (const g of defaultGallery) await supabase.from('ncl_gallery').insert(stripSystem(g))
+    }
+
+    const { data: existingReviews } = await supabase.from('ncl_reviews').select('id').limit(1)
+    if (!existingReviews?.length) {
+      for (const r of defaultReviews) await supabase.from('ncl_reviews').insert(stripSystem(r))
+    }
+
+    const { data: existingEvents } = await supabase.from('ncl_events').select('id').limit(1)
+    if (!existingEvents?.length) {
+      for (const e of defaultEvents) await supabase.from('ncl_events').insert(stripSystem(e))
+    }
   }
 
   // Initial sync (anon data) + re-sync on auth changes so RLS-protected
@@ -162,10 +205,20 @@ export function DataProvider({ children }) {
         .update(stripSystem(patch))
         .eq('id', itemId)
         .select()
-        .single()
-      if (error) return { ok: false, error }
-      setters.current[key]((p) => p.map((x) => (x.id === itemId ? { ...x, ...data } : x)))
-      return { ok: true, data }
+      if (!error && data?.length) {
+        setters.current[key]((p) => p.map((x) => (x.id === itemId ? { ...x, ...data[0] } : x)))
+        return { ok: true, data: data[0] }
+      }
+      // Row only exists in local storage (e.g. a seed item that never made it
+      // into the DB) — promote it to the DB as a new row so the save succeeds.
+      const { data: inserted, error: insErr } = await supabase
+        .from(TABLES[key])
+        .insert(stripSystem({ ...patch, id: itemId }))
+        .select()
+      if (insErr) return { ok: false, error: insErr }
+      const row = inserted?.[0] || { ...stripSystem(patch), id: itemId }
+      setters.current[key]((p) => p.map((x) => (x.id === itemId ? { ...x, ...row, id: row.id } : x)))
+      return { ok: true, data: row }
     }
     setters.current[key]((p) => p.map((x) => (x.id === itemId ? { ...x, ...patch } : x)))
     return { ok: true }
