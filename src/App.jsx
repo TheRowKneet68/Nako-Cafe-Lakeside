@@ -7,14 +7,17 @@ import About from './pages/About.jsx'
 import Menu from './pages/Menu.jsx'
 import Coffee from './pages/Coffee.jsx'
 import Gallery from './pages/Gallery.jsx'
+import Events from './pages/Events.jsx'
 import Reviews from './pages/Reviews.jsx'
 import Reservation from './pages/Reservation.jsx'
 import Contact from './pages/Contact.jsx'
+import NotFound from './pages/NotFound.jsx'
 import RequireAdmin from './components/admin/RequireAdmin.jsx'
 import AdminLayout from './pages/admin/AdminLayout.jsx'
 import AdminLogin from './pages/admin/AdminLogin.jsx'
 import AdminDashboard from './pages/admin/AdminDashboard.jsx'
 import AdminFoods from './pages/admin/AdminFoods.jsx'
+import AdminEvents from './pages/admin/AdminEvents.jsx'
 import AdminGallery from './pages/admin/AdminGallery.jsx'
 import AdminReservations from './pages/admin/AdminReservations.jsx'
 import AdminMessages from './pages/admin/AdminMessages.jsx'
@@ -48,6 +51,7 @@ export default function App() {
               >
                 <Route index element={<AdminDashboard />} />
                 <Route path="foods" element={<AdminFoods />} />
+                <Route path="events" element={<AdminEvents />} />
                 <Route path="gallery" element={<AdminGallery />} />
                 <Route path="reservations" element={<AdminReservations />} />
                 <Route path="messages" element={<AdminMessages />} />
@@ -64,11 +68,12 @@ export default function App() {
                 <Route path="/about" element={<About />} />
                 <Route path="/menu" element={<Menu />} />
                 <Route path="/coffee" element={<Coffee />} />
+                <Route path="/events" element={<Events />} />
                 <Route path="/gallery" element={<Gallery />} />
                 <Route path="/reviews" element={<Reviews />} />
                 <Route path="/reservation" element={<Reservation />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>
           )}

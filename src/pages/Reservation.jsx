@@ -7,6 +7,7 @@ import Reveal from '../components/ui/Reveal.jsx'
 import { useData } from '../context/DataContext.jsx'
 import { useSEO } from '../hooks/useSEO.js'
 import { sendEmail } from '../services/emailService.js'
+import { escapeHtml } from '../lib/escape.js'
 import { images } from '../data/siteData.js'
 
 const timeSlots = []
@@ -40,13 +41,14 @@ export default function Reservation() {
     const reservation = { ...data, status: 'pending' }
     await add('reservations', reservation)
     await sendEmail({
-      templateParams: {
-        from_name: data.name,
-        from_email: data.email || settings.email,
-        reply_to: data.email,
-        to_name: settings.name,
-        message: `Reservation request: ${data.name} · ${data.guests} guests · ${data.date} at ${data.time}. Request: ${data.request || 'None'}`
-      }
+      to_name: settings.name,
+      subject: `Reservation request · ${data.name}`,
+      message_html: [
+        `<p><strong>New reservation request</strong></p>`,
+        `<p>${escapeHtml(data.name)} · ${escapeHtml(data.guests)} guests · ${escapeHtml(data.date)} at ${escapeHtml(data.time)}</p>`,
+        `<p>Phone: ${escapeHtml(data.phone)}${data.email ? ` · Email: ${escapeHtml(data.email)}` : ''}</p>`,
+        data.request ? `<p>Request: ${escapeHtml(data.request)}</p>` : ''
+      ].join('')
     })
     setSubmitted(reservation)
     reset()

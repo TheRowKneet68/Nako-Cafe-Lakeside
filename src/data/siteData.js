@@ -42,6 +42,10 @@ export const defaultSettings = {
   signatureTitle: 'Loved by Regulars',
   signatureSubtitle: 'The cups our guests come back for, again and again — tried, tested and poured daily.',
 
+  eventsEyebrow: "What's On",
+  eventsTitle: 'Events & Evenings',
+  eventsSubtitle: 'Live music, workshops and tastings — the calendar at Nako Cafe.',
+
   galleryEyebrow: 'Our Gallery',
   galleryTitle: 'Life at Nako',
   gallerySubtitle: 'Latte art, warm interiors, golden steam and the people who make the morning better.',

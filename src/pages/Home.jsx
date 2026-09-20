@@ -2,6 +2,7 @@ import Hero from '../components/sections/Hero.jsx'
 import Stats from '../components/sections/Stats.jsx'
 import AboutSection from '../components/sections/AboutSection.jsx'
 import SignatureSection from '../components/sections/SignatureSection.jsx'
+import EventsPreview from '../components/sections/EventsPreview.jsx'
 import GallerySection from '../components/sections/GallerySection.jsx'
 import ReviewsSection from '../components/sections/ReviewsSection.jsx'
 import CTASection from '../components/sections/CTASection.jsx'
@@ -24,6 +25,7 @@ export default function Home() {
       <AboutSection />
       <SignatureSection />
       <GallerySection />
+      <EventsPreview />
       <ReviewsSection limit={6} />
       <CTASection />
     </>

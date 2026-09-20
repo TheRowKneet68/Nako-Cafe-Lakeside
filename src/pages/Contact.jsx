@@ -7,6 +7,7 @@ import Reveal from '../components/ui/Reveal.jsx'
 import { useData } from '../context/DataContext.jsx'
 import { useSEO } from '../hooks/useSEO.js'
 import { sendEmail } from '../services/emailService.js'
+import { escapeHtml } from '../lib/escape.js'
 import { images } from '../data/siteData.js'
 
 export default function Contact() {
@@ -28,12 +29,14 @@ export default function Contact() {
   const onSubmit = async (data) => {
     await add('messages', { ...data, read: false })
     await sendEmail({
-      templateParams: {
-        from_name: data.name,
-        from_email: data.email,
-        to_name: settings.name,
-        message: `Subject: ${data.subject}\n\n${data.message}`
-      }
+      to_name: settings.name,
+      subject: `[Nako Cafe] ${data.subject}`,
+      message_html: [
+        `<p><strong>New contact message from ${escapeHtml(data.name)}</strong></p>`,
+        `<p>Email: ${escapeHtml(data.email)}</p>`,
+        `<p>Subject: ${escapeHtml(data.subject)}</p>`,
+        `<p>${escapeHtml(data.message).replace(/\n/g, '<br>')}</p>`
+      ].join('')
     })
     setSent(true)
     reset()

@@ -15,7 +15,7 @@ export default function AdminLogin() {
   const submit = (e) => {
     e.preventDefault()
     if (adminLogin(email, password)) navigate('/admin')
-    else setError('Invalid credentials. Try admin@viewside.com / admin123.')
+    else setError('Invalid credentials. Try admin@nakocafe.com.np / admin123.')
   }
 
   return (
@@ -38,7 +38,7 @@ export default function AdminLogin() {
           </span>
           <h1 className="mt-4 font-display text-2xl font-bold">Admin Login</h1>
           <p className="mt-1 text-xs text-ink/50">
-            View Side Restaurant · Pokhara
+            Nako Cafe · Pokhara
           </p>
         </div>
 
@@ -52,7 +52,7 @@ export default function AdminLogin() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="input"
-              placeholder="admin@viewside.com"
+              placeholder="admin@nakocafe.com.np"
               required
             />
           </div>
@@ -74,7 +74,7 @@ export default function AdminLogin() {
             <LogIn size={16} /> Sign In
           </button>
           <p className="flex items-center justify-center gap-1.5 text-center text-[11px] text-ink/40">
-            <Lock size={12} /> Default: admin@viewside.com / admin123
+            <Lock size={12} /> Default: admin@nakocafe.com.np / admin123
           </p>
         </form>
       </motion.div>

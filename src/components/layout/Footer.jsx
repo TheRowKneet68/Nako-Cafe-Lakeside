@@ -12,6 +12,8 @@ import {
   Youtube
 } from 'lucide-react'
 import { useData } from '../../context/DataContext.jsx'
+import { sendEmail } from '../../services/emailService.js'
+import { escapeHtml } from '../../lib/escape.js'
 
 export default function Footer() {
   const { settings } = useData()
@@ -30,11 +32,23 @@ export default function Footer() {
     { to: '/about', label: 'About Us' },
     { to: '/menu', label: 'Our Menu' },
     { to: '/coffee', label: 'Featured Coffee' },
+    { to: '/events', label: 'Events' },
     { to: '/gallery', label: 'Gallery' },
     { to: '/reviews', label: 'Reviews' },
     { to: '/reservation', label: 'Reserve a Table' },
     { to: '/contact', label: 'Contact' }
   ]
+
+  const subscribe = async (e) => {
+    e.preventDefault()
+    if (!email.trim()) return
+    await sendEmail({
+      to_name: settings.name,
+      subject: 'New newsletter subscriber',
+      message_html: `<p>A new subscriber has joined the Nako Cafe list:</p><p><strong>${escapeHtml(email)}</strong></p>`
+    })
+    setSubscribed(true)
+  }
 
   return (
     <footer className="border-t border-white/10 bg-[#0c0c0c]">
@@ -120,10 +134,7 @@ export default function Footer() {
           ) : (
             <form
               className="mt-4 flex gap-2"
-              onSubmit={(e) => {
-                e.preventDefault()
-                if (email.trim()) setSubscribed(true)
-              }}
+              onSubmit={subscribe}
             >
               <input
                 type="email"

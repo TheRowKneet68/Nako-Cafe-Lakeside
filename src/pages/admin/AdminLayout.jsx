@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   CalendarCheck,
+  CalendarRange,
   ExternalLink,
   Image,
   LayoutDashboard,
@@ -24,6 +25,7 @@ import { useTheme } from '../../hooks/useTheme.js'
 const items = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/foods', label: 'Menu Items', icon: UtensilsCrossed },
+  { to: '/admin/events', label: 'Events', icon: CalendarRange },
   { to: '/admin/gallery', label: 'Gallery', icon: Image },
   { to: '/admin/reservations', label: 'Reservations', icon: CalendarCheck },
   { to: '/admin/messages', label: 'Messages', icon: Mail },
@@ -53,7 +55,7 @@ export default function AdminLayout() {
           <UtensilsCrossed size={18} />
         </span>
         <span className="leading-tight">
-          <span className="block font-display text-sm font-semibold">View Side</span>
+          <span className="block font-display text-sm font-semibold">Nako Cafe</span>
           <span className="block text-[9px] uppercase tracking-[0.3em] text-gold">Admin Panel</span>
         </span>
       </div>
@@ -157,7 +159,7 @@ export default function AdminLayout() {
           >
             <Menu size={18} />
           </button>
-          <span className="font-display text-sm font-semibold text-gold">View Side · Admin</span>
+          <span className="font-display text-sm font-semibold text-gold">Nako Cafe · Admin</span>
           <button
             onClick={() => setDark((d) => !d)}
             className="grid h-10 w-10 place-items-center rounded-lg border border-line/15 text-ink transition hover:border-gold hover:text-gold"

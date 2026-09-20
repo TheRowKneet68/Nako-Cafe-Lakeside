@@ -47,6 +47,14 @@ const GROUPS = [
     ]
   },
   {
+    title: 'Events',
+    fields: [
+      { key: 'eventsEyebrow', label: 'Eyebrow', type: 'input' },
+      { key: 'eventsTitle', label: 'Title', type: 'input' },
+      { key: 'eventsSubtitle', label: 'Subtitle', type: 'input' }
+    ]
+  },
+  {
     title: 'Gallery',
     fields: [
       { key: 'galleryEyebrow', label: 'Eyebrow', type: 'input' },

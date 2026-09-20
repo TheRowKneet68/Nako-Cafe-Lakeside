@@ -1,21 +1,23 @@
-import { CalendarCheck, Image, Mail, Star, UtensilsCrossed } from 'lucide-react'
+import { CalendarCheck, Eye, Image, Mail, Star, UtensilsCrossed } from 'lucide-react'
 import { useData } from '../../context/DataContext.jsx'
 import { StatCard, EmptyState } from '../../components/admin/ui.jsx'
 import { statusColor } from '../../utils/helpers.js'
 
 export default function AdminDashboard() {
-  const { foods, gallery, reviews, reservations, messages } = useData()
-  const pending = reservations.filter((r) => r.status === 'pending').length
+  const { foods, gallery, reviews, reservations, messages, events, visits } = useData()
   const unread = messages.filter((m) => !m.read).length
   const avg = reviews.length
     ? reviews.reduce((s, r) => s + Number(r.rating || 0), 0) / reviews.length
     : 0
+  const upcomingEvents = events.filter(
+    (e) => e.date >= new Date().toISOString().split('T')[0]
+  ).length
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="font-display text-3xl font-bold">Dashboard</h1>
-        <p className="mt-1 text-sm text-ink/50">An overview of everything happening at View Side.</p>
+        <p className="mt-1 text-sm text-ink/50">An overview of everything happening at Nako Cafe.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -67,10 +69,11 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         <StatCard icon={Image} label="Gallery Photos" value={gallery.length} tone="text-pink-400" />
-        <StatCard icon={CalendarCheck} label="Pending" value={pending} tone="text-amber-400" />
+        <StatCard icon={CalendarCheck} label="Upcoming Events" value={upcomingEvents} tone="text-amber-400" />
         <StatCard icon={Star} label="Total Reviews" value={reviews.length} tone="text-accent" />
+        <StatCard icon={Eye} label="Visits" value={visits} tone="text-accent" />
       </div>
     </div>
   )

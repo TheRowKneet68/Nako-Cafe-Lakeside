@@ -1,12 +1,13 @@
 {
-  "name": "view-side-restaurant",
+  "name": "nako-cafe-lakeside",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "node ./node_modules/vite/bin/vite.js",
+    "build": "node ./node_modules/vite/bin/vite.js build",
+    "preview": "node ./node_modules/vite/bin/vite.js preview",
+    "selfcheck": "node tests/security-selfcheck.mjs"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
@@ -16,14 +17,14 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.2",
-    "react-router-dom": "^6.28.0",
-    "swiper": "^11.1.14"
+    "react-router-dom": "^7.18.4",
+    "swiper": "^14.2.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.3",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
-    "vite": "^5.4.11"
+    "vite": "^8.3.0"
   }
 }
