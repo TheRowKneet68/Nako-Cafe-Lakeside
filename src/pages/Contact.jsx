@@ -138,10 +138,7 @@ export default function Contact() {
                       rows={5}
                       placeholder="Write your message…"
                       className="textarea resize-none"
-                      {...register('message', {
-                        required: 'Message is required',
-                        minLength: { value: 10, message: 'Message is too short' }
-                      })}
+                      {...register('message', { required: 'Message is required' })}
                     />
                     {errors.message && <p className="mt-1.5 text-xs text-red-400">{errors.message.message}</p>}
                   </div>

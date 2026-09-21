@@ -154,14 +154,18 @@ export default function AdminContent() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-3xl font-bold">Content Editor</h1>
-        <p className="mt-1 text-sm text-ink/50">
-          Edit every piece of text and image on the website — it updates instantly across all pages.
-        </p>
-      </div>
-
       <form onSubmit={save} className="space-y-6">
+        <div className="sticky top-16 z-30 -mx-5 flex flex-wrap items-center justify-between gap-3 border-b border-line/10 bg-night/90 px-5 py-3 backdrop-blur lg:top-0 lg:-mx-8 lg:px-8">
+          <div>
+            <h1 className="font-display text-2xl font-bold">Content Editor</h1>
+            <p className="text-xs text-ink/50">
+              Every piece of text and image on the website — updates across all pages.
+            </p>
+          </div>
+          <button type="submit" className="btn-gold !px-6">
+            <Save size={16} /> Save All Changes
+          </button>
+        </div>
         {/* Images */}
         <div className="card p-6">
           <h2 className="border-b border-line/10 pb-3 font-display text-xl font-bold text-gold">Images</h2>

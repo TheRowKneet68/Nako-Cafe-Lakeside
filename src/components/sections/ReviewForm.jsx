@@ -15,8 +15,8 @@ export default function ReviewForm() {
 
   const submit = async (e) => {
     e.preventDefault()
-    if (name.trim().length < 2) return setError('Please enter your name.')
-    if (text.trim().length < 10) return setError('Please write at least one full sentence (10+ characters).')
+    if (!name.trim()) return setError('Please enter your name.')
+    if (!text.trim()) return setError('Please write your review.')
     setError('')
     const res = await add('reviews', {
       name: name.trim(),

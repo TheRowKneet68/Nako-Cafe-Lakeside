@@ -92,7 +92,7 @@ export default function Reservation() {
                     type="text"
                     placeholder="e.g. Sita Sharma"
                     className="input"
-                    {...register('name', { required: 'Name is required', minLength: { value: 2, message: 'Name is too short' } })}
+                    {...register('name', { required: 'Name is required' })}
                   />
                   {errors.name && <p className="mt-1.5 text-xs text-red-400">{errors.name.message}</p>}
                 </div>
